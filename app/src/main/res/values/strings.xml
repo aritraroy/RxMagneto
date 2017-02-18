@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RxMagnetoDemo</string>
+    <string name="lib_name">RxMagneto</string>
+    <string name="label_grab_result">Grab Result</string>
 </resources>
