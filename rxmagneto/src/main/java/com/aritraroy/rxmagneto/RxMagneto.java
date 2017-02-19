@@ -46,7 +46,10 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabUrl() {
-        return grabUrl(mContext.getPackageName());
+        if (mContext != null) {
+            return grabUrl(mContext.getPackageName());
+        }
+        return null;
     }
 
     /**
@@ -65,7 +68,10 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabVersion() {
-        return grabVersion(mContext.getPackageName());
+        if (mContext != null) {
+            return grabVersion(mContext.getPackageName());
+        }
+        return null;
     }
 
     /**
@@ -74,9 +80,12 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabVersion(String packageName) {
-        return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
-                        packageName, RxMagnetoTags.TAG_PLAY_STORE_VERSION));
+        if (mContext != null) {
+            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
+                            packageName, RxMagnetoTags.TAG_PLAY_STORE_VERSION));
+        }
+        return null;
     }
 
     /**
@@ -85,7 +94,10 @@ public class RxMagneto {
      * @return
      */
     public Observable<Boolean> isUpgradeAvailable() {
-        return isUpgradeAvailable(mContext.getPackageName());
+        if (mContext != null) {
+            return isUpgradeAvailable(mContext.getPackageName());
+        }
+        return null;
     }
 
     /**
@@ -94,18 +106,21 @@ public class RxMagneto {
      * @return
      */
     public Observable<Boolean> isUpgradeAvailable(String packageName) {
-        return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
-                        packageName, RxMagnetoTags.TAG_PLAY_STORE_VERSION))
-                .flatMap(version -> {
-                    try {
-                        String currentVersionStr = mContext.getPackageManager()
-                                .getPackageInfo(mContext.getPackageName(), 0).versionName;
-                        return Observable.just(!currentVersionStr.equals(version));
-                    } catch (PackageManager.NameNotFoundException e) {
-                        return Observable.error(e);
-                    }
-                });
+        if (mContext != null) {
+            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
+                            packageName, RxMagnetoTags.TAG_PLAY_STORE_VERSION))
+                    .flatMap(version -> {
+                        try {
+                            String currentVersionStr = mContext.getPackageManager()
+                                    .getPackageInfo(mContext.getPackageName(), 0).versionName;
+                            return Observable.just(!currentVersionStr.equals(version));
+                        } catch (PackageManager.NameNotFoundException e) {
+                            return Observable.error(e);
+                        }
+                    });
+        }
+        return null;
     }
 
     /**
@@ -114,7 +129,10 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabDownloads() {
-        return grabDownloads(mContext.getPackageName());
+        if (mContext != null) {
+            return grabDownloads(mContext.getPackageName());
+        }
+        return null;
     }
 
     /**
@@ -123,9 +141,12 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabDownloads(String packageName) {
-        return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
-                        packageName, RxMagnetoTags.TAG_PLAY_STORE_DOWNLOADS));
+        if (mContext != null) {
+            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
+                            packageName, RxMagnetoTags.TAG_PLAY_STORE_DOWNLOADS));
+        }
+        return null;
     }
 
     /**
@@ -134,7 +155,10 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabPublishedDate() {
-        return grabPublishedDate(mContext.getPackageName());
+        if (mContext != null) {
+            return grabPublishedDate(mContext.getPackageName());
+        }
+        return null;
     }
 
     /**
@@ -143,9 +167,12 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabPublishedDate(String packageName) {
-        return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
-                        packageName, RxMagnetoTags.TAG_PLAY_STORE_PUBLISHED_DATE));
+        if (mContext != null) {
+            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
+                            packageName, RxMagnetoTags.TAG_PLAY_STORE_PUBLISHED_DATE));
+        }
+        return null;
     }
 
     /**
@@ -154,7 +181,10 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabOsRequirements() {
-        return grabOsRequirements(mContext.getPackageName());
+        if (mContext != null) {
+            return grabOsRequirements(mContext.getPackageName());
+        }
+        return null;
     }
 
     /**
@@ -163,9 +193,12 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabOsRequirements(String packageName) {
-        return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
-                        packageName, RxMagnetoTags.TAG_PLAY_STORE_OS_REQUIREMENTS));
+        if (mContext != null) {
+            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
+                            packageName, RxMagnetoTags.TAG_PLAY_STORE_OS_REQUIREMENTS));
+        }
+        return null;
     }
 
     /**
@@ -174,7 +207,10 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabContentRating() {
-        return grabContentRating(mContext.getPackageName());
+        if (mContext != null) {
+            return grabContentRating(mContext.getPackageName());
+        }
+        return null;
     }
 
     /**
@@ -183,9 +219,12 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabContentRating(String packageName) {
-        return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
-                        packageName, RxMagnetoTags.TAG_PLAY_STORE_CONTENT_RATING));
+        if (mContext != null) {
+            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
+                            packageName, RxMagnetoTags.TAG_PLAY_STORE_CONTENT_RATING));
+        }
+        return null;
     }
 
     /**
@@ -194,7 +233,10 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabAppRating() {
-        return grabAppRating(mContext.getPackageName());
+        if (mContext != null) {
+            return grabAppRating(mContext.getPackageName());
+        }
+        return null;
     }
 
     /**
@@ -203,9 +245,12 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabAppRating(String packageName) {
-        return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreAppRating(mContext,
-                        packageName, RxMagnetoTags.TAG_PLAY_STORE_APP_RATING));
+        if (mContext != null) {
+            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreAppRating(mContext,
+                            packageName, RxMagnetoTags.TAG_PLAY_STORE_APP_RATING));
+        }
+        return null;
     }
 
     /**
@@ -214,7 +259,10 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabAppRatingsCount() {
-        return grabAppRatingsCount(mContext.getPackageName());
+        if (mContext != null) {
+            return grabAppRatingsCount(mContext.getPackageName());
+        }
+        return null;
     }
 
     /**
@@ -223,9 +271,12 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabAppRatingsCount(String packageName) {
-        return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreAppRatingsCount(mContext,
-                        packageName, RxMagnetoTags.TAG_PLAY_STORE_APP_RATING_COUNT));
+        if (mContext != null) {
+            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreAppRatingsCount(mContext,
+                            packageName, RxMagnetoTags.TAG_PLAY_STORE_APP_RATING_COUNT));
+        }
+        return null;
     }
 
     /**
@@ -234,7 +285,10 @@ public class RxMagneto {
      * @return
      */
     public Observable<ArrayList<String>> grabPlayStoreRecentChangelogArray() {
-        return grabPlayStoreRecentChangelogArray(mContext.getPackageName());
+        if (mContext != null) {
+            return grabPlayStoreRecentChangelogArray(mContext.getPackageName());
+        }
+        return null;
     }
 
     /**
@@ -243,9 +297,12 @@ public class RxMagneto {
      * @return
      */
     public Observable<ArrayList<String>> grabPlayStoreRecentChangelogArray(String packageName) {
-        return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreRecentChangelogArray(mContext,
-                        packageName));
+        if (mContext != null) {
+            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreRecentChangelogArray(mContext,
+                            packageName));
+        }
+        return null;
     }
 
     /**
@@ -254,7 +311,10 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabPlayStoreRecentChangelog() {
-        return grabPlayStoreRecentChangelog(mContext.getPackageName());
+        if (mContext != null) {
+            return grabPlayStoreRecentChangelog(mContext.getPackageName());
+        }
+        return null;
     }
 
     /**
@@ -263,19 +323,22 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabPlayStoreRecentChangelog(String packageName) {
-        return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreRecentChangelogArray(mContext,
-                        packageName))
-                .flatMap(strings -> {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    for (int i = 0; i < strings.size(); i++) {
-                        String string = strings.get(i);
-                        stringBuilder.append(string);
-                        if (i < strings.size() - 1) {
-                            stringBuilder.append("\n\n");
+        if (mContext != null) {
+            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreRecentChangelogArray(mContext,
+                            packageName))
+                    .flatMap(strings -> {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (int i = 0; i < strings.size(); i++) {
+                            String string = strings.get(i);
+                            stringBuilder.append(string);
+                            if (i < strings.size() - 1) {
+                                stringBuilder.append("\n\n");
+                            }
                         }
-                    }
-                    return Observable.just(stringBuilder.toString());
-                });
+                        return Observable.just(stringBuilder.toString());
+                    });
+        }
+        return null;
     }
 }

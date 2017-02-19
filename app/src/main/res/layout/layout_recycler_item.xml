@@ -14,7 +14,7 @@
         android:layout_centerVertical="true"
         android:text="Play Store URL" />
 
-    <android.support.v7.widget.AppCompatRadioButton
+    <RadioButton
         android:id="@+id/feature_selector"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

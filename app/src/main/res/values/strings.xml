@@ -2,4 +2,18 @@
     <string name="app_name">RxMagnetoDemo</string>
     <string name="lib_name">RxMagneto</string>
     <string name="label_grab_result">Grab Result</string>
+    <string name="label_ok">Ok</string>
+
+    <string-array name="features_list">
+        <item name="1">URL</item>
+        <item name="2">Version</item>
+        <item name="3">Is Update Available?</item>
+        <item name="4">Downloads</item>
+        <item name="5">Published Date</item>
+        <item name="6">OS Requirements</item>
+        <item name="7">Content Rating</item>
+        <item name="8">App Rating</item>
+        <item name="9">App Ratings Count</item>
+        <item name="10">Changelog</item>
+    </string-array>
 </resources>
