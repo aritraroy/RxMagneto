@@ -84,8 +84,10 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            if (mCurrentSelectedFeatureId == 0) {
+            if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_URL) {
                 getPlayStoreUrl(packageName);
+            } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_VERSION) {
+                getPlayStoreVersion(packageName);
             }
         });
 
@@ -109,14 +111,31 @@ public class MainActivity extends AppCompatActivity {
 
     private void getPlayStoreUrl(String packageName) {
         Observable<String> urlObservable = rxMagneto.grabUrl(packageName);
-
         urlObservable.subscribeOn(Schedulers.immediate())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
                     showResult(mFeatureModelList.get(FeaturesConfig.FEATURE_URL).getTitle(), s);
                 }, throwable -> {
                     showResult(getResources().getString(R.string.label_error), throwable.getMessage());
+                });
+    }
 
+    private void getPlayStoreVersion(String packageName) {
+        final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
+
+        Observable<String> versionObservable = rxMagneto.grabVersion(packageName);
+        versionObservable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(s -> {
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                    showResult(mFeatureModelList.get(FeaturesConfig.FEATURE_VERSION).getTitle(), s);
+                }, throwable -> {
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                    showResult(getResources().getString(R.string.label_error), throwable.getMessage());
                 });
     }
 

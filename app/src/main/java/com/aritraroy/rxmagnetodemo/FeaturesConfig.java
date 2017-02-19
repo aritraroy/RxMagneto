@@ -6,14 +6,14 @@ package com.aritraroy.rxmagnetodemo;
 
 public class FeaturesConfig {
 
-    public static final int FEATURE_URL = 1;
-    public static final int FEATURE_VERSION = 2;
-    public static final int FEATURE_IS_UPDATE_AVAILABLE = 3;
-    public static final int FEATURE_DOWNLOADS = 4;
-    public static final int FEATURE_PUBLISHED_DATE = 5;
-    public static final int FEATURE_OS_REQUIREMENTS = 6;
-    public static final int FEATURE_CONTENT_RATING = 7;
-    public static final int FEATURE_APP_RATING = 8;
-    public static final int FEATURE_APP_RATINGS_COUNT = 9;
-    public static final int FEATURE_CHANGELOG = 10;
+    public static final int FEATURE_URL = 0;
+    public static final int FEATURE_VERSION = 1;
+    public static final int FEATURE_IS_UPDATE_AVAILABLE = 2;
+    public static final int FEATURE_DOWNLOADS = 3;
+    public static final int FEATURE_PUBLISHED_DATE = 4;
+    public static final int FEATURE_OS_REQUIREMENTS = 5;
+    public static final int FEATURE_CONTENT_RATING = 6;
+    public static final int FEATURE_APP_RATING = 7;
+    public static final int FEATURE_APP_RATINGS_COUNT = 8;
+    public static final int FEATURE_CHANGELOG = 9;
 }
