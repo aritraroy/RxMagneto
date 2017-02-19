@@ -1,8 +1,11 @@
 <resources>
     <string name="app_name">RxMagnetoDemo</string>
-    <string name="lib_name">RxMagneto</string>
+    <string name="lib_name">Rx Magneto</string>
     <string name="label_grab_result">Grab Result</string>
     <string name="label_ok">Ok</string>
+    <string name="label_error">Error</string>
+    <string name="label_enter_package_name">Enter package name</string>
+    <string name="message_package_name_not_empty">Package name can not be empty</string>
 
     <string-array name="features_list">
         <item name="1">URL</item>

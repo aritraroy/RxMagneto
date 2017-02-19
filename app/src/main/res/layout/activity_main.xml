@@ -11,8 +11,10 @@
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:src="@drawable/ic_launcher" />
 
     <TextView
@@ -27,18 +29,38 @@
         android:textSize="16sp"
         android:textStyle="bold" />
 
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/package_name_text_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/logo"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="28dp"
+        android:layout_marginTop="16dp">
+
+        <EditText
+            android:id="@+id/package_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/label_enter_package_name" />
+
+    </android.support.design.widget.TextInputLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/features_recycler"
         android:layout_width="match_parent"
-        android:layout_height="410dp"
-        android:layout_below="@id/logo"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/grab_result"
+        android:layout_below="@id/package_name_text_input"
         android:layout_marginTop="16dp"
+        android:overScrollMode="never"
+        android:scrollbars="vertical"
         tools:listitem="@layout/layout_recycler_item" />
 
     <Button
         android:id="@+id/grab_result"
         style="@style/AppButton"
-        android:layout_below="@+id/features_recycler"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"
         android:text="@string/label_grab_result"
