@@ -55,13 +55,13 @@ public class RxMagnetoInternal {
                             emitter.onNext(true);
                             emitter.onCompleted();
                         } else {
-                            emitter.onError(new RxMagnetoException("Url is not valid."));
+                            emitter.onError(new RxMagnetoException("Package url is not valid."));
                         }
                     } else {
                         emitter.onError(new NetworkNotAvailableException("Internet connection is not available."));
                     }
                 } catch (MalformedURLException e) {
-                    emitter.onError(new RxMagnetoException("Url is malformed."));
+                    emitter.onError(new RxMagnetoException("Package url is malformed."));
                 } catch (IOException e) {
                     emitter.onError(e);
                 }

@@ -53,13 +53,36 @@ public class RxMagneto {
     }
 
     /**
-     * Grab the Play Store url of th especified package
+     * Grab the Play Store url of the specified package
      *
      * @param packageName
      * @return
      */
     public Observable<String> grabUrl(String packageName) {
         return Observable.just(RxMagnetoInternal.MARKET_PLAY_STORE_URL + packageName);
+    }
+
+    /**
+     * Grab the verified Play Store url of the current package
+     *
+     * @return
+     */
+    public Observable<String> grabVerifiedUrl() {
+        if (mContext != null) {
+            return grabVerifiedUrl(mContext.getPackageName());
+        }
+        return null;
+    }
+
+    /**
+     * Grab the verified Play Store url of the specified package
+     *
+     * @return
+     */
+    public Observable<String> grabVerifiedUrl(String packageName) {
+        return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
+                .filter(aBoolean -> aBoolean)
+                .flatMap(aBoolean -> Observable.just(RxMagnetoInternal.MARKET_PLAY_STORE_URL + packageName));
     }
 
     /**
@@ -170,7 +193,7 @@ public class RxMagneto {
         if (mContext != null) {
             return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
                     .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
-                            packageName, RxMagnetoTags.TAG_PLAY_STORE_PUBLISHED_DATE));
+                            packageName, RxMagnetoTags.TAG_PLAY_STORE_LAST_PUBLISHED_DATE));
         }
         return null;
     }

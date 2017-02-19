@@ -92,8 +92,8 @@ public class MainActivity extends AppCompatActivity {
                 checkIsUpdateAvailable(packageName);
             } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_DOWNLOADS) {
                 getDownloads(packageName);
-            } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_PUBLISHED_DATE) {
-                getPublishedDate(packageName);
+            } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_LAST_PUBLISHED_DATE) {
+                getLastPublishedDate(packageName);
             } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_OS_REQUIREMENTS) {
                 getOSRequirements(packageName);
             } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_CONTENT_RATING) {
@@ -126,12 +126,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getPlayStoreUrl(String packageName) {
-        Observable<String> urlObservable = rxMagneto.grabUrl(packageName);
-        urlObservable.subscribeOn(Schedulers.immediate())
+        final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
+
+        Observable<String> urlObservable = rxMagneto.grabVerifiedUrl(packageName);
+        urlObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
                     showResult(mFeatureModelList.get(FeaturesConfig.FEATURE_URL).getTitle(), s);
                 }, throwable -> {
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
                     showResult(getResources().getString(R.string.label_error), throwable.getMessage());
                 });
     }
@@ -194,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void getPublishedDate(String packageName) {
+    private void getLastPublishedDate(String packageName) {
         final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
 
         Observable<String> publishedDateObservable = rxMagneto.grabPublishedDate(packageName);
@@ -204,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(mFeatureModelList.get(FeaturesConfig.FEATURE_PUBLISHED_DATE).getTitle(), s);
+                    showResult(mFeatureModelList.get(FeaturesConfig.FEATURE_LAST_PUBLISHED_DATE).getTitle(), s);
                 }, throwable -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
