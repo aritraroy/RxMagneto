@@ -1,13 +1,37 @@
 apply plugin: 'com.android.library'
 apply plugin: 'me.tatarka.retrolambda'
 
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'rxmagneto'
+
+    publishedGroupId = 'com.andrognito.rxmagneto'
+    libraryName = 'rxmagneto'
+    artifact = 'rxmagneto'
+
+    libraryDescription = 'A fast, simple and powerful Play Store information fetcher for Android'
+
+    siteUrl = 'https://github.com/aritraroy/RxMagneto'
+    gitUrl = 'https://github.com/aritraroy/RxMagneto.git'
+
+    libraryVersion = '1.0.0'
+
+    developerId = 'aritraroy'
+    developerName = 'Aritra Roy'
+    developerEmail = 'aritra.roy.in@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.3"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
     }
@@ -33,9 +57,12 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:appcompat-v7:25.1.1'
     testCompile 'junit:junit:4.12'
 
     compile 'io.reactivex:rxjava:1.2.6'
     compile 'org.jsoup:jsoup:1.10.2'
 }
+
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'

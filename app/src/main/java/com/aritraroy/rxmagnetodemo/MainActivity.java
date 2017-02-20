@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
     private void getContentRating(String packageName) {
         final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
 
-        Observable<String> contentRatingObservable = rxMagneto.grabVersion(packageName);
+        Observable<String> contentRatingObservable = rxMagneto.grabContentRating(packageName);
         contentRatingObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
