@@ -49,3 +49,26 @@ You might want to show your users the latest changelog when they update the app.
 ### User Ratings
 
 Many developers ask their users to rate the app after a certain period of time. You can also show these users your current rating and ratings count directly from Play Store to encourage users more to rate your app.
+
+## Setup
+
+Once you have downloaded the library in your project. Seting up RxMagneto is just one line of code.
+
+```java
+RxMagneto rxMagneto = RxMagneto.getInstance();
+rxMagneto.initialize(this);
+```
+
+
+## Features
+
+Here are some of the featues offered by RxMagneto.
+
+
+### Get Play Store URL
+
+Gets the Play Store URL of the specified package. You can make this call in the main thread of the application.
+
+```java
+Observable<String> urlObservable = rxMagneto.grabUrl(packageName);
+```
