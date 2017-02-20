@@ -2,7 +2,7 @@
 
 A fast, simple and powerful Play Store information fetcher for Android.
 
-### Show some :heart:
+### Spread Some :heart:
 [![GitHub stars](https://img.shields.io/github/stars/aritraroy/RxMagneto.svg?style=social&label=Star)](https://github.com/aritraroy) [![GitHub followers](https://img.shields.io/github/followers/aritraroy.svg?style=social&label=Follow)](https://github.com/aritraroy)  
 [![Twitter Follow](https://img.shields.io/twitter/follow/aritraroy93.svg?style=social)](https://twitter.com/aritraroy93) 
 
@@ -63,8 +63,25 @@ RxMagneto rxMagneto = RxMagneto.getInstance();
 rxMagneto.initialize(this);
 ```
 
+## Quick Example
 
-## Features
+Here is a quick example for you to get started right away in a minute.
+
+```java
+RxMagneto rxMagneto = RxMagneto.getInstance();
+rxMagneto.initialize(this);
+
+Observable<String> observable = rxMagneto.grabVersion(packageName);
+observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(s -> { 
+                    Log.d("RxMagneto", "Version: " + s);
+                }, throwable -> {
+                    Log.d("RxMagneto", "Error");
+                });
+```
+
+## All Features
 
 Here are some of the featues offered by RxMagneto.
 
