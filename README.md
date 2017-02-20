@@ -33,3 +33,19 @@ dependencies {
   <type>pom</type>
 </dependency>
 ```
+
+## Usecases
+
+There are several usecases of this library. Here are some common examples for you to get started, but be creative and make the most use of it.
+
+### App Updates
+
+This is a common problem for many developers wanting to check if their users are using the latest version of the app available on Play Store. With RxMagneto, you can get it done with just a single line of code.
+
+### Recent Changelog
+
+You might want to show your users the latest changelog when they update the app. RxMagneto can help you fetch the most recent changelog directly from Play Store with just a single line of code.
+
+### User Ratings
+
+Many developers ask their users to rate the app after a certain period of time. You can also show these users your current rating and ratings count directly from Play Store to encourage users more to rate your app.
