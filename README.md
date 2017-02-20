@@ -72,3 +72,91 @@ Gets the Play Store URL of the specified package. You can make this call in the 
 ```java
 Observable<String> urlObservable = rxMagneto.grabUrl(packageName);
 ```
+
+### Get Verified Play Store URL
+
+Gets the verified Play Store URL of the specified package. You can NOT make this call in the main thread of the application.
+
+```java
+Observable<String> urlObservable = rxMagneto.grabVerifiedUrl(packageName);
+```
+
+### Get Version
+
+Gets the version of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+
+```java
+Observable<String> versionObservable = rxMagneto.grabVersion(packageName);
+```
+
+### Check If Update Available
+
+Check if an update is available for the specified package from Play Store. You can NOT make this call in the main thread of the application.
+
+```java
+Observable<Boolean> updateAvailableObservable = rxMagneto.isUpgradeAvailable(packageName);
+```
+
+### Get Downloads
+
+Gets the no. of downloads of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+
+```java
+Observable<String> downloadsObservable = rxMagneto.grabDownloads(packageName);
+```
+
+### Get Last Published Date
+
+Gets the last published date of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+
+```java
+Observable<String> publishedDateObservable = rxMagneto.grabPublishedDate(packageName);
+```
+
+### Get OS Requirements
+
+Gets the OS requirements of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+
+```java
+Observable<String> osRequirementsObservable = rxMagneto.grabOsRequirements(packageName);
+```
+
+### Get Content Rating
+
+Gets the content rating of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+
+```java
+Observable<String> contentRatingObservable = rxMagneto.grabContentRating(packageName);
+```
+
+### Get App Rating
+
+Gets the app rating of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+
+```java
+Observable<String> appRatingObservable = rxMagneto.grabAppRating(packageName);
+```
+
+### Get App Ratings Count
+
+Gets the no. of app ratings of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+
+```java
+Observable<String> appRatingsCount = rxMagneto.grabAppRatingsCount(packageName);
+```
+
+### Get Recent Changelog (as Array)
+
+Gets the recent changelog (as array) of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+
+```java
+Observable<ArrayList<String>> changelogObservable = rxMagneto.grabPlayStoreRecentChangelogArray(packageName);
+```
+
+### Get Recent Changelog (as String)
+
+Gets the recent changelog (as string) of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+
+```java
+Observable<String> changelogObservable = rxMagneto.grabPlayStoreRecentChangelog(packageName);
+```
