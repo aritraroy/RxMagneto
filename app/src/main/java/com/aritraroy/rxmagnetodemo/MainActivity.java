@@ -224,8 +224,8 @@ public class MainActivity extends AppCompatActivity {
     private void getOSRequirements(String packageName) {
         final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
 
-        Observable<String> versionObservable = rxMagneto.grabOsRequirements(packageName);
-        versionObservable.subscribeOn(Schedulers.io())
+        Observable<String> osRequirementsObservable = rxMagneto.grabOsRequirements(packageName);
+        osRequirementsObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
