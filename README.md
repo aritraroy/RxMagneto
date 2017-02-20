@@ -2,6 +2,10 @@
 
 A fast, simple and powerful Play Store information fetcher for Android.
 
+### Show some :heart:
+[![GitHub stars](https://img.shields.io/github/stars/aritraroy/RxMagneto.svg?style=social&label=Star)](https://github.com/aritraroy) [![GitHub followers](https://img.shields.io/github/followers/aritraroy.svg?style=social&label=Follow)](https://github.com/aritraroy)  
+[![Twitter Follow](https://img.shields.io/twitter/follow/aritraroy93.svg?style=social)](https://twitter.com/aritraroy93) 
+
 ![RxMagneto](https://github.com/aritraroy/RxMagneto/blob/master/raw/logo_250.png)
 
 This library allows you to **fetch various live information from Play Store** of your app or any other app of your choice. With just a few lines of code, you can get access to lots of app data fetched live from Google Play Store.
