@@ -11,7 +11,7 @@ This library allows you to **fetch various live information from Play Store** of
 
 It has been named after the famous anti-villian from X-Men group. This library has been **completely written using RxJava** giving you powerful controls to make the most use of it.
 
-![RxMagneto](https://github.com/aritraroy/RxMagneto/blob/master/raw/github_promo.png)
+![RxMagneto](https://github.com/aritraroy/RxMagneto/blob/master/raw/github_screenshot.png)
 
 # Download
 
