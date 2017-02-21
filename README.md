@@ -2,15 +2,14 @@
 
 A fast, simple and powerful Play Store information fetcher for Android.
 
-### Spread Some :heart:
-[![GitHub stars](https://img.shields.io/github/stars/aritraroy/RxMagneto.svg?style=social&label=Star)](https://github.com/aritraroy) [![GitHub followers](https://img.shields.io/github/followers/aritraroy.svg?style=social&label=Follow)](https://github.com/aritraroy)  
-[![Twitter Follow](https://img.shields.io/twitter/follow/aritraroy93.svg?style=social)](https://twitter.com/aritraroy93) 
+### Specs
+[ ![Download](https://api.bintray.com/packages/aritraroy/maven/rxmagneto/images/download.svg) ](https://bintray.com/aritraroy/maven/rxmagneto/_latestVersion) [![API](https://img.shields.io/badge/API-15%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=15)
 
 ![RxMagneto](https://github.com/aritraroy/RxMagneto/blob/master/raw/logo_250.png)
 
-This library allows you to **fetch various live information from Play Store** of your app or any other app of your choice. With just a few lines of code, you can get access to lots of app data fetched live from Google Play Store.
+This library allows you to **fetch various live information from Play Store** of your app or any other app of your choice. With just a few lines of code, you can get access to lots of useful app data fetched fresh from the Play Store.
 
-It has been named after the famous anti-villian from X-Men. This library has been **completely written using RxJava** giving you powrful controls on how you want to use it.
+It has been named after the famous anti-villian from X-Men group. This library has been **completely written using RxJava** giving you powerful controls to make the most use of it.
 
 ![RxMagneto](https://github.com/aritraroy/RxMagneto/blob/master/raw/github_promo.png)
 
@@ -38,34 +37,41 @@ dependencies {
 </dependency>
 ```
 
-## Usecases
+### Spread Some :heart:
+[![GitHub stars](https://img.shields.io/github/stars/aritraroy/RxMagneto.svg?style=social&label=Star)](https://github.com/aritraroy) [![GitHub followers](https://img.shields.io/github/followers/aritraroy.svg?style=social&label=Follow)](https://github.com/aritraroy)  
+[![Twitter Follow](https://img.shields.io/twitter/follow/aritraroy93.svg?style=social)](https://twitter.com/aritraroy93) 
 
-There are several usecases of this library. Here are some common examples for you to get started, but be creative and make the most use of it.
+## Use Cases
+
+There are several use cases of this library. Here are some common examples for you to get started, but you can always be creative and make the most use of it.
 
 ### App Updates
 
-This is a common problem for many developers wanting to check if their users are using the latest version of the app available on Play Store. With RxMagneto, you can get it done with just a single line of code.
+This is a common problem for many developers wanting to check if their users are using the latest version of the app available on Play Store or not. With RxMagneto, you can get it done with just a single line of code and no hassle.
 
 ### Recent Changelog
 
-You might want to show your users the latest changelog when they update the app. RxMagneto can help you fetch the most recent changelog directly from Play Store with just a single line of code.
+You might want to show your users the latest changelog when they update the app. RxMagneto can help you fetch the most recent changelog directly from Play Store with just one line of code.
 
 ### User Ratings
 
-Many developers ask their users to rate the app after a certain period of time. You can also show these users your current rating and ratings count directly from Play Store to encourage users more to rate your app.
+Many developers prompt their users to rate the app after a certain period of time. You can also show your current rating and ratings count directly from Play Store to encourage these users even more to rate your app.
 
 ## Setup
 
-Once you have downloaded the library in your project. Seting up RxMagneto is just one line of code.
+Once you have downloaded the library in your project, setting up RxMagneto is super-easy.
 
 ```java
 RxMagneto rxMagneto = RxMagneto.getInstance();
 rxMagneto.initialize(this);
 ```
 
+The initialize method takes a Context object. It can either be an Application context or Activity context.
+
+
 ## Quick Example
 
-Here is a quick example for you to get started right away in a minute.
+Here is a quick example for you to get started right away in less than a minute.
 
 ```java
 RxMagneto rxMagneto = RxMagneto.getInstance();
@@ -83,7 +89,7 @@ observable.subscribeOn(Schedulers.io())
 
 ## All Features
 
-Here are some of the featues offered by RxMagneto.
+Here is a list of all the featues offered by RxMagneto. I will be actively taking more feature requests and expand the library over time.
 
 
 ### Get Play Store URL
@@ -104,13 +110,13 @@ Observable<String> urlObservable = rxMagneto.grabVerifiedUrl(packageName);
 
 ### Get Version
 
-Gets the version of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+Gets the latest version of the specified package from Play Store. You can NOT make this call in the main thread of the application.
 
 ```java
 Observable<String> versionObservable = rxMagneto.grabVersion(packageName);
 ```
 
-### Check If Update Available
+### Check If Update Is Available
 
 Check if an update is available for the specified package from Play Store. You can NOT make this call in the main thread of the application.
 
@@ -182,14 +188,19 @@ Gets the recent changelog (as string) of the specified package from Play Store. 
 Observable<String> changelogObservable = rxMagneto.grabPlayStoreRecentChangelog(packageName);
 ```
 
-# Author
+# About The Author
 
-**Aritra Roy** - aritra.roy.in@gmail.com
-**Play Store** - <a href="https://play.google.com/store/apps/details?id=com.codexapps.andrognito">Andrognito</a>
+### Aritra Roy
+**Email** - aritra.roy.in@gmail.com
+**Play Store App** - [Andrognito 3](https://play.google.com/store/apps/details?id=com.codexapps.andrognito)
+
+[[Blog](https://blog.aritraroy.in/) | [StackOverflow](http://stackoverflow.com/users/2858654/aritra-roy) | [Twitter](https://twitter.com/aritraroy93)]
+
 
 # Contribution
 
-This library is quite exhaustive and offers a lot of customization options. If you find a bug or would like to improve any aspect of it, feel free to contribute with pull requests.
+This library is quite powerful and offers a lot of features. But I will love to have more feature requests from you to expand it further. If you find a bug or would like to improve any aspect of it, feel free to contribute with pull requests.
+
 
 # License
 
