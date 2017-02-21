@@ -188,14 +188,19 @@ Gets the recent changelog (as string) of the specified package from Play Store. 
 Observable<String> changelogObservable = rxMagneto.grabPlayStoreRecentChangelog(packageName);
 ```
 
-# Author
+# About The Author
 
-**Aritra Roy** - aritra.roy.in@gmail.com
-**Play Store** - <a href="https://play.google.com/store/apps/details?id=com.codexapps.andrognito">Andrognito</a>
+### Aritra Roy
+**Email** - aritra.roy.in@gmail.com
+**Play Store App** - [Andrognito 3](https://play.google.com/store/apps/details?id=com.codexapps.andrognito)
+
+[[Blog](https://blog.aritraroy.in/) | [StackOverflow](http://stackoverflow.com/users/2858654/aritra-roy) | [Twitter](https://twitter.com/aritraroy93)]
+
 
 # Contribution
 
 This library is quite powerful and offers a lot of features. But I will love to have more feature requests from you to expand it further. If you find a bug or would like to improve any aspect of it, feel free to contribute with pull requests.
+
 
 # License
 
