@@ -2,9 +2,8 @@
 
 A fast, simple and powerful Play Store information fetcher for Android.
 
-### Spread Some :heart:
-[![GitHub stars](https://img.shields.io/github/stars/aritraroy/RxMagneto.svg?style=social&label=Star)](https://github.com/aritraroy) [![GitHub followers](https://img.shields.io/github/followers/aritraroy.svg?style=social&label=Follow)](https://github.com/aritraroy)  
-[![Twitter Follow](https://img.shields.io/twitter/follow/aritraroy93.svg?style=social)](https://twitter.com/aritraroy93) 
+### Specs
+[ ![Download](https://api.bintray.com/packages/aritraroy/maven/rxmagneto/images/download.svg) ](https://bintray.com/aritraroy/maven/rxmagneto/_latestVersion) [![API](https://img.shields.io/badge/API-15%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=15)
 
 ![RxMagneto](https://github.com/aritraroy/RxMagneto/blob/master/raw/logo_250.png)
 
@@ -37,6 +36,10 @@ dependencies {
   <type>pom</type>
 </dependency>
 ```
+
+### Spread Some :heart:
+[![GitHub stars](https://img.shields.io/github/stars/aritraroy/RxMagneto.svg?style=social&label=Star)](https://github.com/aritraroy) [![GitHub followers](https://img.shields.io/github/followers/aritraroy.svg?style=social&label=Follow)](https://github.com/aritraroy)  
+[![Twitter Follow](https://img.shields.io/twitter/follow/aritraroy93.svg?style=social)](https://twitter.com/aritraroy93) 
 
 ## Usecases
 
