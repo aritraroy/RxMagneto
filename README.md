@@ -7,9 +7,9 @@ A fast, simple and powerful Play Store information fetcher for Android.
 
 ![RxMagneto](https://github.com/aritraroy/RxMagneto/blob/master/raw/logo_250.png)
 
-This library allows you to **fetch various live information from Play Store** of your app or any other app of your choice. With just a few lines of code, you can get access to lots of useful app data fetched fresh from the Play Store.
+This library allows you to **fetch various live information from Play Store** of your app or any other app of your choice. With just a few lines of code, you can get access to a lot of useful app data fetched fresh from the Play Store.
 
-It has been named after the famous anti-villian from X-Men group. This library has been **completely written using RxJava** giving you powerful controls to make the most use of it.
+It has been named after the famous anti-villian from X-Men. This library has been **completely written using RxJava** giving you powerful controls to make the most use of it.
 
 ![RxMagneto](https://github.com/aritraroy/RxMagneto/blob/master/raw/github_screenshot.png)
 
@@ -47,7 +47,7 @@ There are several use cases of this library. Here are some common examples for y
 
 ### App Updates
 
-This is a common problem for many developers wanting to check if their users are using the latest version of the app available on Play Store or not. With RxMagneto, you can get it done with just a single line of code and no hassle.
+This is a common problem for many developers wanting to check if their users are using the latest version of the app available on Play Store or not. With RxMagneto, you can get it done with just a single line of code and zero hassle.
 
 ### Recent Changelog
 
@@ -55,7 +55,7 @@ You might want to show your users the latest changelog when they update the app.
 
 ### User Ratings
 
-Many developers prompt their users to rate the app after a certain period of time. You can also show your current rating and ratings count directly from Play Store to encourage these users even more to rate your app.
+Many developers prompt their users to rate the app after a certain period of time. You can also show your current rating and ratings count directly from Play Store to encourage these users to rate your app even more.
 
 ## Setup
 
