@@ -1,9 +1,9 @@
 # RxMagneto
 
-A fast, simple and powerful Play Store information fetcher for Android.
+A fast, light-weight and powerful Play Store information fetcher for Android.
 
 ### Specs
-[ ![Download](https://api.bintray.com/packages/aritraroy/maven/rxmagneto/images/download.svg) ](https://bintray.com/aritraroy/maven/rxmagneto/_latestVersion) [![API](https://img.shields.io/badge/API-15%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=15)
+[ ![Download](https://api.bintray.com/packages/aritraroy/maven/rxmagneto/images/download.svg) ](https://bintray.com/aritraroy/maven/rxmagneto/_latestVersion) [![API](https://img.shields.io/badge/API-15%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=15) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ![RxMagneto](https://github.com/aritraroy/RxMagneto/blob/master/raw/logo_250.png)
 
