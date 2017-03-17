@@ -130,18 +130,18 @@ public class RxMagneto {
      */
     public Observable<Boolean> isUpgradeAvailable(String packageName) {
         if (mContext != null) {
+            String currentVersionStr;
+            try {
+                currentVersionStr = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).versionName;
+
+            } catch (PackageManager.NameNotFoundException e) {
+                return Observable.error(e);
+            }
+
             return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
                     .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
                             packageName, RxMagnetoTags.TAG_PLAY_STORE_VERSION))
-                    .flatMap(version -> {
-                        try {
-                            String currentVersionStr = mContext.getPackageManager()
-                                    .getPackageInfo(mContext.getPackageName(), 0).versionName;
-                            return Observable.just(!currentVersionStr.equals(version));
-                        } catch (PackageManager.NameNotFoundException e) {
-                            return Observable.error(e);
-                        }
-                    });
+                    .flatMap(version -> Observable.just(!currentVersionStr.equals(version)));
         }
         return null;
     }
