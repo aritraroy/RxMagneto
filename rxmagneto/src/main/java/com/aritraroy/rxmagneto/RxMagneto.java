@@ -3,6 +3,8 @@ package com.aritraroy.rxmagneto;
 import android.content.Context;
 import android.content.pm.PackageManager;
 
+import com.aritraroy.rxmagneto.exceptions.AppVersionNotFoundException;
+import com.aritraroy.rxmagneto.utils.Constants;
 import com.aritraroy.rxmagneto.utils.RxMagnetoTags;
 
 import java.util.ArrayList;
@@ -130,17 +132,21 @@ public class RxMagneto {
      */
     public Observable<Boolean> isUpgradeAvailable(String packageName) {
         if (mContext != null) {
+            String currentVersionStr;
+            try {
+                currentVersionStr = mContext.getPackageManager().getPackageInfo(packageName, 0).versionName;
+            } catch (PackageManager.NameNotFoundException e) {
+                return Observable.error(new PackageManager.NameNotFoundException(packageName + " not installed in your device"));
+            }
+
             return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
                     .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
                             packageName, RxMagnetoTags.TAG_PLAY_STORE_VERSION))
                     .flatMap(version -> {
-                        try {
-                            String currentVersionStr = mContext.getPackageManager()
-                                    .getPackageInfo(mContext.getPackageName(), 0).versionName;
-                            return Observable.just(!currentVersionStr.equals(version));
-                        } catch (PackageManager.NameNotFoundException e) {
-                            return Observable.error(e);
+                        if (Constants.APP_VERSION_VARIES_WITH_DEVICE.equals(version)) {
+                            return Observable.error(new AppVersionNotFoundException("App version varies with device."));
                         }
+                        return Observable.just(!currentVersionStr.equals(version));
                     });
         }
         return null;
