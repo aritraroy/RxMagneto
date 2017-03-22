@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,8 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.aritraroy.rxmagneto.RxMagneto;
 import com.aritraroy.rxmagnetodemo.domain.FeatureModel;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+       Fresco.initialize(this);
+
         setContentView(R.layout.activity_main);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -103,7 +109,11 @@ public class MainActivity extends AppCompatActivity {
             } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_APP_RATINGS_COUNT) {
                 getAppRatingsCount(packageName);
             } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_RECENT_CHANGELOG) {
-                getRecentChangelog(packageName);
+               getRecentChangelog(packageName);
+            } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_APP_CATEGORY) {
+               getAppCategory(packageName);
+            } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_APP_IMAGE) {
+               getAppImage(packageName);
             }
         });
 
@@ -113,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         mLogo.requestFocus();
     }
 
-    private List<FeatureModel> getFeatureModelsList() {
+   private List<FeatureModel> getFeatureModelsList() {
         String[] featuresArray = getResources().getStringArray(R.array.features_list);
 
         List<FeatureModel> featureModelsList = new ArrayList<>();
@@ -316,15 +326,63 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void showResult(String title, String result) {
+   private void getAppCategory(String packageName) {
+      final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
+
+      Observable<Pair<String, String>> changelogObservable = rxMagneto.grabAppCategory(packageName);
+      changelogObservable.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(categoryPair -> {
+               if (progressDialog != null && progressDialog.isShowing()) {
+                  progressDialog.dismiss();
+               }
+               showResult(mFeatureModelList.get(FeaturesConfig.FEATURE_APP_CATEGORY).getTitle(), categoryPair.first + " (ID: " + categoryPair.second + ")");
+            }, throwable -> {
+               if (progressDialog != null && progressDialog.isShowing()) {
+                  progressDialog.dismiss();
+               }
+               showResult(getResources().getString(R.string.label_error), throwable.getMessage());
+            });
+   }
+
+   private void getAppImage(String packageName) {
+      final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
+
+      Observable<String> changelogObservable = rxMagneto.grabAppImage(packageName);
+      changelogObservable.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(imageUrl -> {
+               if (progressDialog != null && progressDialog.isShowing()) {
+                  progressDialog.dismiss();
+               }
+               showResultImage(mFeatureModelList.get(FeaturesConfig.FEATURE_APP_IMAGE).getTitle(), imageUrl);
+            }, throwable -> {
+               if (progressDialog != null && progressDialog.isShowing()) {
+                  progressDialog.dismiss();
+               }
+               showResult(getResources().getString(R.string.label_error), throwable.getMessage());
+            });
+   }
+
+   private void showResult(String title, String result) {
         new MaterialDialog.Builder(this)
                 .title(title)
                 .content(result)
                 .positiveText(R.string.label_ok)
                 .show();
-    }
+   }
 
-    public static MaterialDialog showLoading(Activity activity, String message) {
+   private void showResultImage(String title, String imageUrl) {
+
+		SimpleDraweeView appImageView = (SimpleDraweeView) new MaterialDialog.Builder(this)
+				.title(title)
+				.customView(R.layout.dialog_show_app_image, false)
+				.positiveText(R.string.label_ok)
+				.show().getCustomView().findViewById(R.id.dialog_show_app_image_simple_drawee_view);
+		appImageView.setImageURI(imageUrl);
+   }
+
+   public static MaterialDialog showLoading(Activity activity, String message) {
         return new MaterialDialog.Builder(activity)
                 .content(message)
                 .cancelable(false)
