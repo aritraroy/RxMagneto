@@ -1,12 +1,14 @@
 package com.aritraroy.rxmagneto;
 
 import android.content.Context;
+import android.support.v4.util.Pair;
 
 import com.aritraroy.rxmagneto.exceptions.NetworkNotAvailableException;
 import com.aritraroy.rxmagneto.exceptions.RxMagnetoException;
 import com.aritraroy.rxmagneto.utils.Connectivity;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
@@ -15,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 
 import rx.Emitter;
 import rx.Observable;
@@ -26,8 +29,16 @@ import rx.functions.Action1;
 
 public class RxMagnetoInternal {
 
-    private static final int DEFAULT_TIMEOUT = 5000;
-    static final String MARKET_PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=";
+   private static final int DEFAULT_TIMEOUT = 5000;
+
+	/**
+	 * Create Market Url and take current language into account (based on {@link Locale#getDefault()}
+	 * @param packageName
+	 * @return
+	 */
+	static String getMarketUrl(String packageName) {
+		return "https://play.google.com/store/apps/details?hl="+ Locale.getDefault().getLanguage()+"&id="+packageName;
+	}
 
     /**
      * Check if the package url is a valid Google Play Store page url
@@ -44,7 +55,7 @@ public class RxMagnetoInternal {
             public void call(Emitter<Boolean> emitter) {
                 URL url;
                 try {
-                    url = new URL(MARKET_PLAY_STORE_URL + packageName);
+                    url = new URL(getMarketUrl(packageName));
                     HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                     httpURLConnection.setRequestMethod("GET");
 
@@ -85,7 +96,7 @@ public class RxMagnetoInternal {
                 String parsedData;
                 try {
                     if (Connectivity.isConnected(context)) {
-                        parsedData = Jsoup.connect(MARKET_PLAY_STORE_URL + packageName)
+                        parsedData = Jsoup.connect(getMarketUrl(packageName))
                                 .timeout(DEFAULT_TIMEOUT)
                                 .ignoreHttpErrors(true)
                                 .referrer("http://www.google.com").get()
@@ -120,7 +131,7 @@ public class RxMagnetoInternal {
                 String parsedData;
                 try {
                     if (Connectivity.isConnected(context)) {
-                        parsedData = Jsoup.connect(MARKET_PLAY_STORE_URL + packageName)
+                        parsedData = Jsoup.connect(getMarketUrl(packageName))
                                 .timeout(DEFAULT_TIMEOUT)
                                 .ignoreHttpErrors(true)
                                 .referrer("http://www.google.com").get()
@@ -156,7 +167,7 @@ public class RxMagnetoInternal {
                 String parsedData;
                 try {
                     if (Connectivity.isConnected(context)) {
-                        parsedData = Jsoup.connect(MARKET_PLAY_STORE_URL + packageName)
+                        parsedData = Jsoup.connect(getMarketUrl(packageName))
                                 .timeout(DEFAULT_TIMEOUT)
                                 .ignoreHttpErrors(true)
                                 .referrer("http://www.google.com").get()
@@ -191,7 +202,7 @@ public class RxMagnetoInternal {
                 Elements elements;
                 try {
                     if (Connectivity.isConnected(context)) {
-                        elements = Jsoup.connect(MARKET_PLAY_STORE_URL + packageName)
+                        elements = Jsoup.connect(getMarketUrl(packageName))
                                 .timeout(DEFAULT_TIMEOUT)
                                 .ignoreHttpErrors(true)
                                 .referrer("http://www.google.com").get()
@@ -214,4 +225,83 @@ public class RxMagnetoInternal {
             }
         }, Emitter.BackpressureMode.LATEST);
     }
+
+    /**
+     * Gets the app category from the Play Store page of the given package
+     *
+     * @param context     The application context
+     * @param packageName The package name of the application
+     * @return category + categoryId
+     */
+    static Observable<Pair<String, String>> getPlayStoreAppCategory(final Context context, final String packageName, final String tag) {
+        return Observable.fromEmitter(emitter -> {
+				try {
+					 if (Connectivity.isConnected(context)) {
+
+/*
+						  parsedData = Jsoup.connect(getMarketUrl(packageName))
+								  .timeout(DEFAULT_TIMEOUT)
+								  .ignoreHttpErrors(true)
+								  .referrer("http://www.google.com").get()
+								  .select("span[itemprop=genre]").first()
+								  .ownText();
+*/
+
+                     // We are Searching for
+                    // <a class="document-subtitle category" href="/store/apps/category/PERSONALIZATION">
+                    //    <span itemprop="genre">Personnalisation</span>
+                    // </a>
+
+                    Element anchor = Jsoup.connect(getMarketUrl(packageName))
+                          .timeout(DEFAULT_TIMEOUT)
+                          .ignoreHttpErrors(true)
+                          .referrer("http://www.google.com").get()
+                          .select("a[class="+tag+"]").first();
+
+                    String categoryId = anchor.attr("href").substring("/store/apps/category/".length());
+                    String category = anchor.text().trim();
+
+						  emitter.onNext(new Pair(category, categoryId));
+						  emitter.onCompleted();
+					 } else {
+						  emitter.onError(new NetworkNotAvailableException("Network not available"));
+					 }
+				} catch (Exception e) {
+					 emitter.onError(e);
+				}
+		  }, Emitter.BackpressureMode.LATEST);
+    }
+
+    /**
+     * Gets the app category from the Play Store page of the given package
+     *
+     * @param context     The application context
+     * @param packageName The package name of the application
+     * @return category + categoryId
+     */
+    static Observable<String> getPlayStoreAppImageUrl(final Context context, final String packageName) {
+        return Observable.fromEmitter(emitter -> {
+            try {
+                if (Connectivity.isConnected(context)) {
+                    String imgSrc = Jsoup.connect(getMarketUrl(packageName))
+                          .timeout(DEFAULT_TIMEOUT)
+                          .ignoreHttpErrors(true)
+                          .referrer("http://www.google.com").get()
+                          .select("img[itemprop=image]").first().attr("src");
+
+                    if(imgSrc.endsWith("=w300")) {
+
+                    }
+
+                    emitter.onNext("https:"+imgSrc);
+                    emitter.onCompleted();
+                } else {
+                    emitter.onError(new NetworkNotAvailableException("Network not available"));
+                }
+            } catch (Exception e) {
+                emitter.onError(e);
+            }
+        }, Emitter.BackpressureMode.LATEST);
+    }
+
 }

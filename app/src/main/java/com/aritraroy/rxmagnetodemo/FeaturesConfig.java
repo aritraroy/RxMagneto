@@ -16,4 +16,6 @@ public class FeaturesConfig {
     public static final int FEATURE_APP_RATING = 7;
     public static final int FEATURE_APP_RATINGS_COUNT = 8;
     public static final int FEATURE_RECENT_CHANGELOG = 9;
+    public static final int FEATURE_APP_CATEGORY = 10;
+    public static final int FEATURE_APP_IMAGE = 11;
 }

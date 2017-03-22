@@ -19,5 +19,7 @@
         <item name="8">App Rating</item>
         <item name="9">App Ratings Count</item>
         <item name="10">Changelog</item>
+        <item name="11">Category</item>
+        <item name="12">Image</item>
     </string-array>
 </resources>

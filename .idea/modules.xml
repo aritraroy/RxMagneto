@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/RxMagnetoDemo.iml" filepath="$PROJECT_DIR$/RxMagnetoDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RxMagnetoPdf.iml" filepath="$PROJECT_DIR$/RxMagnetoPdf.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/rxmagneto/rxmagneto.iml" filepath="$PROJECT_DIR$/rxmagneto/rxmagneto.iml" />
     </modules>
