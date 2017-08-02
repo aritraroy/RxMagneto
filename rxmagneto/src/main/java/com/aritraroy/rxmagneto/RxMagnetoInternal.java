@@ -6,13 +6,12 @@ import com.aritraroy.rxmagneto.exceptions.NetworkNotAvailableException;
 import com.aritraroy.rxmagneto.exceptions.RxMagnetoException;
 import com.aritraroy.rxmagneto.utils.Connectivity;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -42,16 +41,14 @@ public class RxMagnetoInternal {
         return Observable.fromEmitter(new Action1<Emitter<Boolean>>() {
             @Override
             public void call(Emitter<Boolean> emitter) {
-                URL url;
                 try {
-                    url = new URL(MARKET_PLAY_STORE_URL + packageName);
-                    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                    httpURLConnection.setRequestMethod("GET");
-
                     if (Connectivity.isConnected(context)) {
-                        httpURLConnection.connect();
+                        Connection.Response response = Jsoup.connect(MARKET_PLAY_STORE_URL + packageName)
+                                .timeout(DEFAULT_TIMEOUT)
+                                .ignoreHttpErrors(true)
+                                .referrer("http://www.google.com").execute();
 
-                        if (httpURLConnection.getResponseCode() == 200) {
+                        if (response.statusCode() == 200) {
                             emitter.onNext(true);
                             emitter.onCompleted();
                         } else {
