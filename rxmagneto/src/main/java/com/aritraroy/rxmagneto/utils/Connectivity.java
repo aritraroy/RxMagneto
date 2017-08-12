@@ -1,39 +1,32 @@
 package com.aritraroy.rxmagneto.utils;
 
-/**
- * Created by aritraroy on 15/10/16.
- */
-
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.Nullable;
 
 /**
- * Check device's network connectivity
+ * Created by aritraroy on 15/10/16.
+ *
+ * Utility class to check network connectivity of the device
  */
 public class Connectivity {
 
     /**
-     * Get the network info
-     *
-     * @param context
-     * @return
+     * Get the network information of the device
      */
     @Nullable
     public static NetworkInfo getNetworkInfo(Context context) {
         if (context != null) {
-            ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager cm = (ConnectivityManager) context
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
             return cm.getActiveNetworkInfo();
         }
         return null;
     }
 
     /**
-     * Check if there is any connectivity
-     *
-     * @param context
-     * @return
+     * Check if the device is connected to the network
      */
     public static boolean isConnected(Context context) {
         if (context != null) {

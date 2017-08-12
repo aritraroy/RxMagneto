@@ -2,6 +2,7 @@ package com.aritraroy.rxmagneto;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.text.TextUtils;
 
 import com.aritraroy.rxmagneto.exceptions.AppVersionNotFoundException;
 import com.aritraroy.rxmagneto.utils.Constants;
@@ -18,7 +19,8 @@ import io.reactivex.Observable;
 public class RxMagneto {
 
     private static volatile RxMagneto INSTANCE = null;
-    private Context mContext;
+
+    private Context context;
 
     private RxMagneto() {
         if (INSTANCE != null) {
@@ -39,29 +41,32 @@ public class RxMagneto {
     }
 
     public void initialize(Context context) {
-        this.mContext = context;
+        this.context = context;
     }
 
     /**
      * Grab the Play Store url of the current package
      *
-     * @return
+     * @return An Observable emitting the url
      */
     public Observable<String> grabUrl() {
-        if (mContext != null) {
-            return grabUrl(mContext.getPackageName());
+        if (context != null) {
+            return grabUrl(context.getPackageName());
         }
-        return null;
+        return Observable.empty();
     }
 
     /**
      * Grab the Play Store url of the specified package
      *
-     * @param packageName
-     * @return
+     * @param packageName A particular package name
+     * @return An Observable emitting the url
      */
     public Observable<String> grabUrl(String packageName) {
-        return Observable.just(RxMagnetoInternal.MARKET_PLAY_STORE_URL + packageName);
+        if (!TextUtils.isEmpty(packageName)) {
+            return Observable.just(RxMagnetoInternal.MARKET_PLAY_STORE_URL + packageName);
+        }
+        return Observable.empty();
     }
 
     /**
@@ -70,8 +75,8 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabVerifiedUrl() {
-        if (mContext != null) {
-            return grabVerifiedUrl(mContext.getPackageName());
+        if (context != null) {
+            return grabVerifiedUrl(context.getPackageName());
         }
         return null;
     }
@@ -82,7 +87,7 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabVerifiedUrl(String packageName) {
-        return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
+        return RxMagnetoInternal.isPackageUrlValid(context, packageName)
                 .filter(aBoolean -> aBoolean)
                 .flatMap(aBoolean -> Observable.just(RxMagnetoInternal.MARKET_PLAY_STORE_URL + packageName));
     }
@@ -93,8 +98,8 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabVersion() {
-        if (mContext != null) {
-            return grabVersion(mContext.getPackageName());
+        if (context != null) {
+            return grabVersion(context.getPackageName());
         }
         return null;
     }
@@ -105,9 +110,9 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabVersion(String packageName) {
-        if (mContext != null) {
-            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
+        if (context != null) {
+            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(context,
                             packageName, RxMagnetoTags.TAG_PLAY_STORE_VERSION));
         }
         return null;
@@ -119,8 +124,8 @@ public class RxMagneto {
      * @return
      */
     public Observable<Boolean> isUpgradeAvailable() {
-        if (mContext != null) {
-            return isUpgradeAvailable(mContext.getPackageName());
+        if (context != null) {
+            return isUpgradeAvailable(context.getPackageName());
         }
         return null;
     }
@@ -131,16 +136,16 @@ public class RxMagneto {
      * @return
      */
     public Observable<Boolean> isUpgradeAvailable(String packageName) {
-        if (mContext != null) {
+        if (context != null) {
             String currentVersionStr;
             try {
-                currentVersionStr = mContext.getPackageManager().getPackageInfo(packageName, 0).versionName;
+                currentVersionStr = context.getPackageManager().getPackageInfo(packageName, 0).versionName;
             } catch (PackageManager.NameNotFoundException e) {
                 return Observable.error(new PackageManager.NameNotFoundException(packageName + " not installed in your device"));
             }
 
-            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
+            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(context,
                             packageName, RxMagnetoTags.TAG_PLAY_STORE_VERSION))
                     .flatMap(version -> {
                         if (Constants.APP_VERSION_VARIES_WITH_DEVICE.equals(version)) {
@@ -158,8 +163,8 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabDownloads() {
-        if (mContext != null) {
-            return grabDownloads(mContext.getPackageName());
+        if (context != null) {
+            return grabDownloads(context.getPackageName());
         }
         return null;
     }
@@ -170,9 +175,9 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabDownloads(String packageName) {
-        if (mContext != null) {
-            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
+        if (context != null) {
+            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(context,
                             packageName, RxMagnetoTags.TAG_PLAY_STORE_DOWNLOADS));
         }
         return null;
@@ -184,8 +189,8 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabPublishedDate() {
-        if (mContext != null) {
-            return grabPublishedDate(mContext.getPackageName());
+        if (context != null) {
+            return grabPublishedDate(context.getPackageName());
         }
         return null;
     }
@@ -196,9 +201,9 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabPublishedDate(String packageName) {
-        if (mContext != null) {
-            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
+        if (context != null) {
+            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(context,
                             packageName, RxMagnetoTags.TAG_PLAY_STORE_LAST_PUBLISHED_DATE));
         }
         return null;
@@ -210,8 +215,8 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabOsRequirements() {
-        if (mContext != null) {
-            return grabOsRequirements(mContext.getPackageName());
+        if (context != null) {
+            return grabOsRequirements(context.getPackageName());
         }
         return null;
     }
@@ -222,9 +227,9 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabOsRequirements(String packageName) {
-        if (mContext != null) {
-            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
+        if (context != null) {
+            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(context,
                             packageName, RxMagnetoTags.TAG_PLAY_STORE_OS_REQUIREMENTS));
         }
         return null;
@@ -236,8 +241,8 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabContentRating() {
-        if (mContext != null) {
-            return grabContentRating(mContext.getPackageName());
+        if (context != null) {
+            return grabContentRating(context.getPackageName());
         }
         return null;
     }
@@ -248,9 +253,9 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabContentRating(String packageName) {
-        if (mContext != null) {
-            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(mContext,
+        if (context != null) {
+            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(context,
                             packageName, RxMagnetoTags.TAG_PLAY_STORE_CONTENT_RATING));
         }
         return null;
@@ -262,8 +267,8 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabAppRating() {
-        if (mContext != null) {
-            return grabAppRating(mContext.getPackageName());
+        if (context != null) {
+            return grabAppRating(context.getPackageName());
         }
         return null;
     }
@@ -274,9 +279,9 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabAppRating(String packageName) {
-        if (mContext != null) {
-            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreAppRating(mContext,
+        if (context != null) {
+            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreAppRating(context,
                             packageName, RxMagnetoTags.TAG_PLAY_STORE_APP_RATING));
         }
         return null;
@@ -288,8 +293,8 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabAppRatingsCount() {
-        if (mContext != null) {
-            return grabAppRatingsCount(mContext.getPackageName());
+        if (context != null) {
+            return grabAppRatingsCount(context.getPackageName());
         }
         return null;
     }
@@ -300,9 +305,9 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabAppRatingsCount(String packageName) {
-        if (mContext != null) {
-            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreAppRatingsCount(mContext,
+        if (context != null) {
+            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreAppRatingsCount(context,
                             packageName, RxMagnetoTags.TAG_PLAY_STORE_APP_RATING_COUNT));
         }
         return null;
@@ -314,8 +319,8 @@ public class RxMagneto {
      * @return
      */
     public Observable<ArrayList<String>> grabPlayStoreRecentChangelogArray() {
-        if (mContext != null) {
-            return grabPlayStoreRecentChangelogArray(mContext.getPackageName());
+        if (context != null) {
+            return grabPlayStoreRecentChangelogArray(context.getPackageName());
         }
         return null;
     }
@@ -326,9 +331,9 @@ public class RxMagneto {
      * @return
      */
     public Observable<ArrayList<String>> grabPlayStoreRecentChangelogArray(String packageName) {
-        if (mContext != null) {
-            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreRecentChangelogArray(mContext,
+        if (context != null) {
+            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreRecentChangelogArray(context,
                             packageName));
         }
         return null;
@@ -340,8 +345,8 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabPlayStoreRecentChangelog() {
-        if (mContext != null) {
-            return grabPlayStoreRecentChangelog(mContext.getPackageName());
+        if (context != null) {
+            return grabPlayStoreRecentChangelog(context.getPackageName());
         }
         return null;
     }
@@ -352,9 +357,9 @@ public class RxMagneto {
      * @return
      */
     public Observable<String> grabPlayStoreRecentChangelog(String packageName) {
-        if (mContext != null) {
-            return RxMagnetoInternal.isPackageUrlValid(mContext, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreRecentChangelogArray(mContext,
+        if (context != null) {
+            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
+                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreRecentChangelogArray(context,
                             packageName))
                     .flatMap(strings -> {
                         StringBuilder stringBuilder = new StringBuilder();
