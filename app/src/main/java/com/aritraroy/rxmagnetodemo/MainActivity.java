@@ -29,15 +29,9 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ImageView mLogo;
-    private RecyclerView mFeatureRecycler;
-    private Button mGrabResultButton;
-    private EditText mPackageNameEditText;
-
-    private List<FeatureModel> mFeatureModelList;
-    private FeaturesRecyclerAdapter mFeatureModelRecyclerAdapter;
-    private int mCurrentSelectedFeatureId = 0;
-
+    private EditText packageNameEditText;
+    private List<FeatureModel> featureModelList;
+    private int currentSelectedFeatureId = 0;
     private RxMagneto rxMagneto;
 
     @Override
@@ -56,26 +50,28 @@ public class MainActivity extends AppCompatActivity {
         rxMagneto = RxMagneto.getInstance();
         rxMagneto.initialize(this);
 
-        mLogo = (ImageView) findViewById(R.id.logo);
-        mFeatureRecycler = (RecyclerView) findViewById(R.id.features_recycler);
-        mGrabResultButton = (Button) findViewById(R.id.grab_result);
-        mPackageNameEditText = (EditText) findViewById(R.id.package_name);
+        ImageView logo = (ImageView) findViewById(R.id.logo);
+        RecyclerView featureRecycler = (RecyclerView) findViewById(R.id.features_recycler);
+        Button grabResultButton = (Button) findViewById(R.id.grab_result);
+        packageNameEditText = (EditText) findViewById(R.id.package_name);
 
-        mFeatureModelList = getFeatureModelsList();
-        mFeatureModelRecyclerAdapter = new FeaturesRecyclerAdapter(mFeatureModelList);
-        mFeatureRecycler.setLayoutManager(new LinearLayoutManager(this));
-        mFeatureRecycler.setWillNotDraw(false);
-        mFeatureRecycler.setAdapter(mFeatureModelRecyclerAdapter);
+        featureModelList = getFeatureModelsList();
+        FeaturesRecyclerAdapter featureModelRecyclerAdapter =
+                new FeaturesRecyclerAdapter(featureModelList);
+        featureRecycler.setLayoutManager(new LinearLayoutManager(this));
+        featureRecycler.setWillNotDraw(false);
+        featureRecycler.setAdapter(featureModelRecyclerAdapter);
 
         // Removing all RecycleView animations
-        ((SimpleItemAnimator) mFeatureRecycler.getItemAnimator()).setSupportsChangeAnimations(false);
+        ((SimpleItemAnimator) featureRecycler.getItemAnimator())
+                .setSupportsChangeAnimations(false);
 
-        mFeatureModelRecyclerAdapter.setOnClickListener(featureId -> {
-            mCurrentSelectedFeatureId = featureId;
+        featureModelRecyclerAdapter.setOnClickListener(featureId -> {
+            currentSelectedFeatureId = featureId;
         });
 
-        mGrabResultButton.setOnClickListener(v -> {
-            String packageName = mPackageNameEditText.getText().toString();
+        grabResultButton.setOnClickListener(v -> {
+            String packageName = packageNameEditText.getText().toString();
 
             if (TextUtils.isEmpty(packageName)) {
                 Toast.makeText(MainActivity.this,
@@ -84,33 +80,33 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_URL) {
+            if (currentSelectedFeatureId == FeaturesConfig.FEATURE_URL) {
                 getPlayStoreUrl(packageName);
-            } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_VERSION) {
+            } else if (currentSelectedFeatureId == FeaturesConfig.FEATURE_VERSION) {
                 getPlayStoreVersion(packageName);
-            } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_IS_UPDATE_AVAILABLE) {
+            } else if (currentSelectedFeatureId == FeaturesConfig.FEATURE_IS_UPDATE_AVAILABLE) {
                 checkIsUpdateAvailable(packageName);
-            } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_DOWNLOADS) {
+            } else if (currentSelectedFeatureId == FeaturesConfig.FEATURE_DOWNLOADS) {
                 getDownloads(packageName);
-            } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_LAST_PUBLISHED_DATE) {
+            } else if (currentSelectedFeatureId == FeaturesConfig.FEATURE_LAST_PUBLISHED_DATE) {
                 getLastPublishedDate(packageName);
-            } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_OS_REQUIREMENTS) {
+            } else if (currentSelectedFeatureId == FeaturesConfig.FEATURE_OS_REQUIREMENTS) {
                 getOSRequirements(packageName);
-            } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_CONTENT_RATING) {
+            } else if (currentSelectedFeatureId == FeaturesConfig.FEATURE_CONTENT_RATING) {
                 getContentRating(packageName);
-            } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_APP_RATING) {
+            } else if (currentSelectedFeatureId == FeaturesConfig.FEATURE_APP_RATING) {
                 getAppRating(packageName);
-            } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_APP_RATINGS_COUNT) {
+            } else if (currentSelectedFeatureId == FeaturesConfig.FEATURE_APP_RATINGS_COUNT) {
                 getAppRatingsCount(packageName);
-            } else if (mCurrentSelectedFeatureId == FeaturesConfig.FEATURE_RECENT_CHANGELOG) {
+            } else if (currentSelectedFeatureId == FeaturesConfig.FEATURE_RECENT_CHANGELOG) {
                 getRecentChangelog(packageName);
             }
         });
 
         // Sample package name. Can be changed to any name
-        mPackageNameEditText.setText("com.codexapps.andrognito");
-        mPackageNameEditText.clearFocus();
-        mLogo.requestFocus();
+        packageNameEditText.setText(R.string.default_package_name);
+        packageNameEditText.clearFocus();
+        logo.requestFocus();
     }
 
     private List<FeatureModel> getFeatureModelsList() {
@@ -135,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(mFeatureModelList.get(FeaturesConfig.FEATURE_URL).getTitle(), s);
+                    showResult(featureModelList.get(FeaturesConfig.FEATURE_URL).getTitle(), s);
                 }, throwable -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
@@ -145,7 +141,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getPlayStoreVersion(String packageName) {
-        final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
+        final MaterialDialog progressDialog = showLoading(this,
+                getResources().getString(R.string.message_grabbing));
 
         Observable<String> versionObservable = rxMagneto.grabVersion(packageName);
         versionObservable.subscribeOn(Schedulers.io())
@@ -154,17 +151,19 @@ public class MainActivity extends AppCompatActivity {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(mFeatureModelList.get(FeaturesConfig.FEATURE_VERSION).getTitle(), s);
+                    showResult(featureModelList.get(FeaturesConfig.FEATURE_VERSION).getTitle(), s);
                 }, throwable -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(getResources().getString(R.string.label_error), throwable.getMessage());
+                    showResult(getResources().getString(R.string.label_error),
+                            throwable.getMessage());
                 });
     }
 
     private void checkIsUpdateAvailable(String packageName) {
-        final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
+        final MaterialDialog progressDialog = showLoading(this,
+                getResources().getString(R.string.message_grabbing));
 
         Observable<Boolean> updateAvailableObservable = rxMagneto.isUpgradeAvailable(packageName);
         updateAvailableObservable.subscribeOn(Schedulers.io())
@@ -173,18 +172,21 @@ public class MainActivity extends AppCompatActivity {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(mFeatureModelList.get(
-                            FeaturesConfig.FEATURE_IS_UPDATE_AVAILABLE).getTitle(), aBoolean.toString());
+                    showResult(featureModelList.get(
+                            FeaturesConfig.FEATURE_IS_UPDATE_AVAILABLE).getTitle(),
+                            aBoolean.toString());
                 }, throwable -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(getResources().getString(R.string.label_error), throwable.getMessage());
+                    showResult(getResources().getString(R.string.label_error),
+                            throwable.getMessage());
                 });
     }
 
     private void getDownloads(String packageName) {
-        final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
+        final MaterialDialog progressDialog = showLoading(this,
+                getResources().getString(R.string.message_grabbing));
 
         Observable<String> downloadsObservable = rxMagneto.grabDownloads(packageName);
         downloadsObservable.subscribeOn(Schedulers.io())
@@ -193,17 +195,20 @@ public class MainActivity extends AppCompatActivity {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(mFeatureModelList.get(FeaturesConfig.FEATURE_DOWNLOADS).getTitle(), s);
+                    showResult(featureModelList.get(FeaturesConfig.FEATURE_DOWNLOADS)
+                            .getTitle(), s);
                 }, throwable -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(getResources().getString(R.string.label_error), throwable.getMessage());
+                    showResult(getResources().getString(R.string.label_error),
+                            throwable.getMessage());
                 });
     }
 
     private void getLastPublishedDate(String packageName) {
-        final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
+        final MaterialDialog progressDialog = showLoading(this,
+                getResources().getString(R.string.message_grabbing));
 
         Observable<String> publishedDateObservable = rxMagneto.grabPublishedDate(packageName);
         publishedDateObservable.subscribeOn(Schedulers.io())
@@ -212,17 +217,20 @@ public class MainActivity extends AppCompatActivity {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(mFeatureModelList.get(FeaturesConfig.FEATURE_LAST_PUBLISHED_DATE).getTitle(), s);
+                    showResult(featureModelList.get(FeaturesConfig.FEATURE_LAST_PUBLISHED_DATE)
+                            .getTitle(), s);
                 }, throwable -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(getResources().getString(R.string.label_error), throwable.getMessage());
+                    showResult(getResources().getString(R.string.label_error),
+                            throwable.getMessage());
                 });
     }
 
     private void getOSRequirements(String packageName) {
-        final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
+        final MaterialDialog progressDialog = showLoading(this,
+                getResources().getString(R.string.message_grabbing));
 
         Observable<String> osRequirementsObservable = rxMagneto.grabOsRequirements(packageName);
         osRequirementsObservable.subscribeOn(Schedulers.io())
@@ -231,17 +239,20 @@ public class MainActivity extends AppCompatActivity {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(mFeatureModelList.get(FeaturesConfig.FEATURE_OS_REQUIREMENTS).getTitle(), s);
+                    showResult(featureModelList.get(FeaturesConfig.FEATURE_OS_REQUIREMENTS)
+                            .getTitle(), s);
                 }, throwable -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(getResources().getString(R.string.label_error), throwable.getMessage());
+                    showResult(getResources().getString(R.string.label_error),
+                            throwable.getMessage());
                 });
     }
 
     private void getContentRating(String packageName) {
-        final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
+        final MaterialDialog progressDialog = showLoading(this,
+                getResources().getString(R.string.message_grabbing));
 
         Observable<String> contentRatingObservable = rxMagneto.grabContentRating(packageName);
         contentRatingObservable.subscribeOn(Schedulers.io())
@@ -250,17 +261,20 @@ public class MainActivity extends AppCompatActivity {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(mFeatureModelList.get(FeaturesConfig.FEATURE_CONTENT_RATING).getTitle(), s);
+                    showResult(featureModelList.get(FeaturesConfig.FEATURE_CONTENT_RATING)
+                            .getTitle(), s);
                 }, throwable -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(getResources().getString(R.string.label_error), throwable.getMessage());
+                    showResult(getResources().getString(R.string.label_error),
+                            throwable.getMessage());
                 });
     }
 
     private void getAppRating(String packageName) {
-        final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
+        final MaterialDialog progressDialog = showLoading(this,
+                getResources().getString(R.string.message_grabbing));
 
         Observable<String> appRatingObservable = rxMagneto.grabAppRating(packageName);
         appRatingObservable.subscribeOn(Schedulers.io())
@@ -269,12 +283,14 @@ public class MainActivity extends AppCompatActivity {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(mFeatureModelList.get(FeaturesConfig.FEATURE_APP_RATING).getTitle(), s);
+                    showResult(featureModelList.get(FeaturesConfig.FEATURE_APP_RATING)
+                            .getTitle(), s);
                 }, throwable -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(getResources().getString(R.string.label_error), throwable.getMessage());
+                    showResult(getResources().getString(R.string.label_error),
+                            throwable.getMessage());
                 });
     }
 
@@ -288,7 +304,8 @@ public class MainActivity extends AppCompatActivity {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(mFeatureModelList.get(FeaturesConfig.FEATURE_APP_RATINGS_COUNT).getTitle(), s);
+                    showResult(featureModelList.get(FeaturesConfig.FEATURE_APP_RATINGS_COUNT)
+                            .getTitle(), s);
                 }, throwable -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
@@ -298,7 +315,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getRecentChangelog(String packageName) {
-        final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
+        final MaterialDialog progressDialog = showLoading(this,
+                getResources().getString(R.string.message_grabbing));
 
         Observable<String> changelogObservable = rxMagneto.grabPlayStoreRecentChangelog(packageName);
         changelogObservable.subscribeOn(Schedulers.io())
@@ -307,12 +325,14 @@ public class MainActivity extends AppCompatActivity {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(mFeatureModelList.get(FeaturesConfig.FEATURE_RECENT_CHANGELOG).getTitle(), s);
+                    showResult(featureModelList.get(FeaturesConfig.FEATURE_RECENT_CHANGELOG)
+                            .getTitle(), s);
                 }, throwable -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(getResources().getString(R.string.label_error), throwable.getMessage());
+                    showResult(getResources().getString(R.string.label_error),
+                            throwable.getMessage());
                 });
     }
 

@@ -7,6 +7,7 @@
     <string name="label_enter_package_name">Enter package name</string>
     <string name="message_package_name_not_empty">Package name can not be empty</string>
     <string name="message_grabbing">Grabbing, please wait…</string>
+    <string name="default_package_name">com.codexapps.andrognito</string>
 
     <string-array name="features_list">
         <item name="1">URL</item>
