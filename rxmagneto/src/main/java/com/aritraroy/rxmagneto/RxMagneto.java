@@ -9,7 +9,7 @@ import com.aritraroy.rxmagneto.utils.RxMagnetoTags;
 
 import java.util.ArrayList;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 /**
  * Created by aritraroy on 08/02/17.
