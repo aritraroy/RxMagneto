@@ -7,7 +7,10 @@ package com.aritraroy.rxmagneto.exceptions;
  */
 public class RxMagnetoException extends Exception {
 
-    public RxMagnetoException(String message) {
+    int errorCode;
+
+    public RxMagnetoException(int errorCode, String message) {
         super(message);
+        this.errorCode = errorCode;
     }
 }

@@ -4,13 +4,34 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
+import com.aritraroy.rxmagneto.domain.PlayPackageInfo;
 import com.aritraroy.rxmagneto.exceptions.AppVersionNotFoundException;
-import com.aritraroy.rxmagneto.utils.Constants;
-import com.aritraroy.rxmagneto.utils.RxMagnetoTags;
+import com.aritraroy.rxmagneto.exceptions.RxMagnetoException;
+import com.aritraroy.rxmagneto.util.Constants;
+import com.aritraroy.rxmagneto.util.RxMagnetoTags;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Single;
+import io.reactivex.SingleSource;
+import io.reactivex.functions.Function;
+
+import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_APP_RATING;
+import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_APP_RATING_COUNT;
+import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_CHANGELOG;
+import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_CONTENT_RATING;
+import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_DOWNLOADS;
+import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_OS_REQUIREMENTS;
+import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_PUBLISHED_DATE;
+import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_UPDATE;
+import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_VERIFIED_ERROR;
+import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_VERSION;
+import static com.aritraroy.rxmagneto.RxMagnetoInternal.*;
+import static com.aritraroy.rxmagneto.util.RxMagnetoTags.*;
+import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_VERSION;
 
 /**
  * Created by aritraroy on 08/02/17.
@@ -47,75 +68,86 @@ public class RxMagneto {
     /**
      * Grab the Play Store url of the current package
      *
-     * @return An Observable emitting the url
+     * @return A Single emitting the url
      */
-    public Observable<String> grabUrl() {
+    public Single<String> grabUrl() {
         if (context != null) {
             return grabUrl(context.getPackageName());
         }
-        return Observable.empty();
+        return Single.error(new RxMagnetoException(ErrorCodeMap.ERROR_URL.getErrorCode(),
+                "Failed to grab url."));
     }
 
     /**
      * Grab the Play Store url of the specified package
      *
      * @param packageName A particular package name
-     * @return An Observable emitting the url
+     * @return A Single emitting the url
      */
-    public Observable<String> grabUrl(String packageName) {
+    public Single<String> grabUrl(String packageName) {
         if (!TextUtils.isEmpty(packageName)) {
-            return Observable.just(RxMagnetoInternal.MARKET_PLAY_STORE_URL + packageName);
+            return Single.just(MARKET_PLAY_STORE_URL + packageName);
         }
-        return Observable.empty();
+        return Single.error(new RxMagnetoException(ErrorCodeMap.ERROR_URL.getErrorCode(),
+                "Failed to grab url."));
     }
 
     /**
      * Grab the verified Play Store url of the current package
      *
-     * @return
+     * @return A Single emitting the verified url of the current package
      */
-    public Observable<String> grabVerifiedUrl() {
+    public Single<String> grabVerifiedUrl() {
         if (context != null) {
             return grabVerifiedUrl(context.getPackageName());
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_VERIFIED_ERROR.getErrorCode(),
+                "Failed to grab verified url"));
     }
 
     /**
      * Grab the verified Play Store url of the specified package
      *
-     * @return
+     * @return A Single emitting the verified url of the specified package
      */
-    public Observable<String> grabVerifiedUrl(String packageName) {
-        return RxMagnetoInternal.isPackageUrlValid(context, packageName)
-                .filter(aBoolean -> aBoolean)
-                .flatMap(aBoolean -> Observable.just(RxMagnetoInternal.MARKET_PLAY_STORE_URL + packageName));
+    public Single<String> grabVerifiedUrl(String packageName) {
+        return validatePlayPackage(context, packageName)
+                            .flatMap(playPackageInfo -> Single.just(playPackageInfo.getPackageUrl()));
+
+                /*.filter(PlayPackageInfo::isUrlValid)
+                .flatMap(new Function<PlayPackageInfo, ObservableSource<PlayPackageInfo>>() {
+                    @Override
+                    public ObservableSource<String> apply(PlayPackageInfo playPackageInfo) throws Exception {
+                        return null;
+                    }
+                }).to;*/
     }
 
     /**
      * Grab the latest version of the current package available on Play Store
      *
-     * @return
+     * @return A Single emitting the version for the current package
      */
-    public Observable<String> grabVersion() {
+    public Single<String> grabVersion() {
         if (context != null) {
             return grabVersion(context.getPackageName());
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_VERSION.getErrorCode(),
+                "Failed to grab version"));
     }
 
     /**
      * Grab the latest version of the specified package available on Play Store
      *
-     * @return
+     * @return A Single emitting the version for the specified package
      */
-    public Observable<String> grabVersion(String packageName) {
+    public Single<String> grabVersion(String packageName) {
         if (context != null) {
-            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(context,
-                            packageName, RxMagnetoTags.TAG_PLAY_STORE_VERSION));
+            return getPlayPackageInfo(context, packageName, TAG_PLAY_STORE_VERSION)
+                    .flatMap(playPackageInfo -> Single.just(playPackageInfo.getPackageVersion()));
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_VERSION.getErrorCode(),
+                "Failed to grab package version"));
     }
 
     /**
@@ -123,11 +155,12 @@ public class RxMagneto {
      *
      * @return
      */
-    public Observable<Boolean> isUpgradeAvailable() {
+    public Single<Boolean> isUpgradeAvailable() {
         if (context != null) {
             return isUpgradeAvailable(context.getPackageName());
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_VERSION.getErrorCode(),
+                "Failed to grab package version"));
     }
 
     /**
@@ -135,26 +168,26 @@ public class RxMagneto {
      *
      * @return
      */
-    public Observable<Boolean> isUpgradeAvailable(String packageName) {
+    public Single<Boolean> isUpgradeAvailable(String packageName) {
         if (context != null) {
             String currentVersionStr;
             try {
                 currentVersionStr = context.getPackageManager().getPackageInfo(packageName, 0).versionName;
             } catch (PackageManager.NameNotFoundException e) {
-                return Observable.error(new PackageManager.NameNotFoundException(packageName + " not installed in your device"));
+                return Single.error(new PackageManager.NameNotFoundException(packageName + " not installed in your device"));
             }
 
-            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(context,
-                            packageName, RxMagnetoTags.TAG_PLAY_STORE_VERSION))
-                    .flatMap(version -> {
-                        if (Constants.APP_VERSION_VARIES_WITH_DEVICE.equals(version)) {
-                            return Observable.error(new AppVersionNotFoundException("App version varies with device."));
+            return getPlayPackageInfo(context, packageName, TAG_PLAY_STORE_VERSION)
+                    .flatMap(playPackageInfo -> {
+                        String currentVersion = playPackageInfo.getPackageVersion();
+                        if (Constants.APP_VERSION_VARIES_WITH_DEVICE.equals(currentVersion)) {
+                            return Single.error(new AppVersionNotFoundException("App version varies with device."));
                         }
-                        return Observable.just(!currentVersionStr.equals(version));
+                        return Single.just(!currentVersionStr.equals(currentVersion));
                     });
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_UPDATE.getErrorCode(),
+                "Failed to grab package update"));
     }
 
     /**
@@ -162,11 +195,12 @@ public class RxMagneto {
      *
      * @return
      */
-    public Observable<String> grabDownloads() {
+    public Single<String> grabDownloads() {
         if (context != null) {
             return grabDownloads(context.getPackageName());
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_DOWNLOADS.getErrorCode(),
+                "Failed to grab downloads"));
     }
 
     /**
@@ -174,13 +208,13 @@ public class RxMagneto {
      *
      * @return
      */
-    public Observable<String> grabDownloads(String packageName) {
+    public Single<String> grabDownloads(String packageName) {
         if (context != null) {
-            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(context,
-                            packageName, RxMagnetoTags.TAG_PLAY_STORE_DOWNLOADS));
+            return getPlayPackageInfo(context, packageName, TAG_PLAY_STORE_DOWNLOADS)
+                    .flatMap(playPackageInfo -> Single.just(playPackageInfo.getDownloads()));
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_DOWNLOADS.getErrorCode(),
+                "Failed to grab downloads"));
     }
 
     /**
@@ -188,11 +222,12 @@ public class RxMagneto {
      *
      * @return
      */
-    public Observable<String> grabPublishedDate() {
+    public Single<String> grabPublishedDate() {
         if (context != null) {
             return grabPublishedDate(context.getPackageName());
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_PUBLISHED_DATE.getErrorCode(),
+                "Failed to grab published date"));
     }
 
     /**
@@ -200,13 +235,14 @@ public class RxMagneto {
      *
      * @return
      */
-    public Observable<String> grabPublishedDate(String packageName) {
+    public Single<String> grabPublishedDate(String packageName) {
         if (context != null) {
-            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(context,
-                            packageName, RxMagnetoTags.TAG_PLAY_STORE_LAST_PUBLISHED_DATE));
+            return getPlayPackageInfo(context,
+                    packageName, TAG_PLAY_STORE_LAST_PUBLISHED_DATE)
+                    .flatMap(playPackageInfo -> Single.just(playPackageInfo.getPublishedDate()));
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_PUBLISHED_DATE.getErrorCode(),
+                "Failed to grab published date"));
     }
 
     /**
@@ -214,11 +250,12 @@ public class RxMagneto {
      *
      * @return
      */
-    public Observable<String> grabOsRequirements() {
+    public Single<String> grabOsRequirements() {
         if (context != null) {
             return grabOsRequirements(context.getPackageName());
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_OS_REQUIREMENTS.getErrorCode(),
+                "Failed to grab OS requirements"));
     }
 
     /**
@@ -226,13 +263,14 @@ public class RxMagneto {
      *
      * @return
      */
-    public Observable<String> grabOsRequirements(String packageName) {
+    public Single<String> grabOsRequirements(String packageName) {
         if (context != null) {
-            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(context,
-                            packageName, RxMagnetoTags.TAG_PLAY_STORE_OS_REQUIREMENTS));
+            return getPlayPackageInfo(context,
+                    packageName, TAG_PLAY_STORE_OS_REQUIREMENTS)
+                    .flatMap(playPackageInfo -> Single.just(playPackageInfo.getOsRequirements()));
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_OS_REQUIREMENTS.getErrorCode(),
+                "Failed to grab OS requirements"));
     }
 
     /**
@@ -240,11 +278,12 @@ public class RxMagneto {
      *
      * @return
      */
-    public Observable<String> grabContentRating() {
+    public Single<String> grabContentRating() {
         if (context != null) {
             return grabContentRating(context.getPackageName());
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_CONTENT_RATING.getErrorCode(),
+                "Failed to grab content rating"));
     }
 
     /**
@@ -252,13 +291,14 @@ public class RxMagneto {
      *
      * @return
      */
-    public Observable<String> grabContentRating(String packageName) {
+    public Single<String> grabContentRating(String packageName) {
         if (context != null) {
-            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreInfo(context,
-                            packageName, RxMagnetoTags.TAG_PLAY_STORE_CONTENT_RATING));
+            return getPlayPackageInfo(context,
+                    packageName, TAG_PLAY_STORE_CONTENT_RATING)
+                    .flatMap(playPackageInfo -> Single.just(playPackageInfo.getContentRating()));
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_CONTENT_RATING.getErrorCode(),
+                "Failed to grab content rating"));
     }
 
     /**
@@ -266,11 +306,12 @@ public class RxMagneto {
      *
      * @return
      */
-    public Observable<String> grabAppRating() {
+    public Single<String> grabAppRating() {
         if (context != null) {
             return grabAppRating(context.getPackageName());
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_APP_RATING.getErrorCode(),
+                "Failed to grab app rating"));
     }
 
     /**
@@ -278,13 +319,13 @@ public class RxMagneto {
      *
      * @return
      */
-    public Observable<String> grabAppRating(String packageName) {
+    public Single<String> grabAppRating(String packageName) {
         if (context != null) {
-            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreAppRating(context,
-                            packageName, RxMagnetoTags.TAG_PLAY_STORE_APP_RATING));
+            return getPlayStoreAppRating(context, packageName)
+                    .flatMap(playPackageInfo -> Single.just(playPackageInfo.getAppRating()));
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_APP_RATING.getErrorCode(),
+                "Failed to grab app rating"));
     }
 
     /**
@@ -292,11 +333,12 @@ public class RxMagneto {
      *
      * @return
      */
-    public Observable<String> grabAppRatingsCount() {
+    public Single<String> grabAppRatingsCount() {
         if (context != null) {
             return grabAppRatingsCount(context.getPackageName());
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_APP_RATING_COUNT.getErrorCode(),
+                "Failed to grab app rating count"));
     }
 
     /**
@@ -304,13 +346,14 @@ public class RxMagneto {
      *
      * @return
      */
-    public Observable<String> grabAppRatingsCount(String packageName) {
+    public Single<String> grabAppRatingsCount(String packageName) {
         if (context != null) {
-            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreAppRatingsCount(context,
-                            packageName, RxMagnetoTags.TAG_PLAY_STORE_APP_RATING_COUNT));
+            return getPlayStoreAppRatingsCount(context, packageName)
+                    .flatMap(playPackageInfo -> Single.just(playPackageInfo.getAppRatingCount()));
+
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_APP_RATING_COUNT.getErrorCode(),
+                "Failed to grab app rating count"));
     }
 
     /**
@@ -318,11 +361,12 @@ public class RxMagneto {
      *
      * @return
      */
-    public Observable<ArrayList<String>> grabPlayStoreRecentChangelogArray() {
+    public Single<List<String>> grabPlayStoreRecentChangelogArray() {
         if (context != null) {
             return grabPlayStoreRecentChangelogArray(context.getPackageName());
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_CHANGELOG.getErrorCode(),
+                "Failed to grab app changelog"));
     }
 
     /**
@@ -330,13 +374,13 @@ public class RxMagneto {
      *
      * @return
      */
-    public Observable<ArrayList<String>> grabPlayStoreRecentChangelogArray(String packageName) {
+    public Single<List<String>> grabPlayStoreRecentChangelogArray(String packageName) {
         if (context != null) {
-            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreRecentChangelogArray(context,
-                            packageName));
+            return getPlayStoreRecentChangelogArray(context, packageName)
+                    .flatMap(playPackageInfo -> Single.just(playPackageInfo.getChangelogArray()));
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_CHANGELOG.getErrorCode(),
+                "Failed to grab app changelog"));
     }
 
     /**
@@ -344,35 +388,36 @@ public class RxMagneto {
      *
      * @return
      */
-    public Observable<String> grabPlayStoreRecentChangelog() {
+    public Single<String> grabPlayStoreRecentChangelog() {
         if (context != null) {
             return grabPlayStoreRecentChangelog(context.getPackageName());
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_CHANGELOG.getErrorCode(),
+                "Failed to grab app changelog"));
     }
 
     /**
      * Grab the changelog or "What's New" section of the specified app
      *
-     * @return
+     * @return An Observable emitting the changelog
      */
-    public Observable<String> grabPlayStoreRecentChangelog(String packageName) {
+    public Single<String> grabPlayStoreRecentChangelog(String packageName) {
         if (context != null) {
-            return RxMagnetoInternal.isPackageUrlValid(context, packageName)
-                    .flatMap(aBoolean -> RxMagnetoInternal.getPlayStoreRecentChangelogArray(context,
-                            packageName))
-                    .flatMap(strings -> {
-                        StringBuilder stringBuilder = new StringBuilder();
-                        for (int i = 0; i < strings.size(); i++) {
-                            String string = strings.get(i);
-                            stringBuilder.append(string);
-                            if (i < strings.size() - 1) {
-                                stringBuilder.append("\n\n");
-                            }
-                        }
-                        return Observable.just(stringBuilder.toString());
-                    });
+            return getPlayStoreRecentChangelogArray(context, packageName)
+                    .flatMap(playPackageInfo -> Single.just(playPackageInfo.getChangelogArray())
+                            .flatMap(strings -> {
+                                StringBuilder stringBuilder = new StringBuilder();
+                                for (int i = 0; i < strings.size(); i++) {
+                                    String string = strings.get(i);
+                                    stringBuilder.append(string);
+                                    if (i < strings.size() - 1) {
+                                        stringBuilder.append("\n\n");
+                                    }
+                                }
+                                return Single.just(stringBuilder.toString());
+                            }));
         }
-        return null;
+        return Single.error(new RxMagnetoException(ERROR_CHANGELOG.getErrorCode(),
+                "Failed to grab app changelog"));
     }
 }
