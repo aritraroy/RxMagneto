@@ -5,8 +5,6 @@ import android.content.Context;
 import com.aritraroy.rxmagneto.domain.PlayPackageInfo;
 import com.aritraroy.rxmagneto.exceptions.NetworkNotAvailableException;
 import com.aritraroy.rxmagneto.exceptions.RxMagnetoException;
-import com.aritraroy.rxmagneto.util.Connectivity;
-import com.aritraroy.rxmagneto.util.RxMagnetoTags;
 
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
@@ -18,10 +16,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import io.reactivex.Observable;
 import io.reactivex.Single;
 
 import static com.aritraroy.rxmagneto.ErrorCodeMap.*;
+import static com.aritraroy.rxmagneto.util.Connectivity.*;
 import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_APP_RATING;
 import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_APP_RATING_COUNT;
 import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_CONTENT_RATING;
@@ -37,6 +35,7 @@ import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_VERSION;
 public class RxMagnetoInternal {
 
     private static final int DEFAULT_TIMEOUT = 5000;
+    private static final String DEFAULT_REFERER = "http://www.google.com";
     static final String MARKET_PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=";
 
     /**
@@ -50,26 +49,23 @@ public class RxMagnetoInternal {
     static Single<PlayPackageInfo> validatePlayPackage(final Context context,
                                                        final String packageName) {
         return Single.create(emitter -> {
-            URL url;
-            String urlSpec = MARKET_PLAY_STORE_URL + packageName;
             try {
-                url = new URL(urlSpec);
+                String packageUrl = MARKET_PLAY_STORE_URL + packageName;
+                URL url = new URL(packageUrl);
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setRequestMethod("GET");
 
-                if (Connectivity.isConnected(context)) {
+                if (isConnected(context)) {
                     httpURLConnection.connect();
 
-                    boolean isUrlVerified = httpURLConnection.getResponseCode() == 200;
-                    PlayPackageInfo playPackageInfo = new PlayPackageInfo(packageName, urlSpec);
-                    playPackageInfo.setUrlValid(isUrlVerified);
+                    PlayPackageInfo playPackageInfo = new PlayPackageInfo(packageName, packageUrl);
+                    playPackageInfo.setUrlValid(httpURLConnection.getResponseCode() == 200);
                     emitter.onSuccess(playPackageInfo);
                 } else {
                     emitter.onError(new NetworkNotAvailableException("Internet connection is not available."));
                 }
             } catch (MalformedURLException e) {
-                emitter.onError(new RxMagnetoException(ERROR_GENERIC.getErrorCode(),
-                        "Package url is malformed."));
+                emitter.onError(new RxMagnetoException(ERROR_GENERIC.getErrorCode(), "Package url is malformed."));
             } catch (IOException e) {
                 emitter.onError(e);
             }
@@ -84,22 +80,24 @@ public class RxMagnetoInternal {
      * @param tag         The item property specification
      * @return
      */
-    static Single<PlayPackageInfo> getPlayPackageInfo(final Context context, final String packageName,
+    static Single<PlayPackageInfo> getPlayPackageInfo(final Context context,
+                                                      final String packageName,
                                                       final String tag) {
         return Single.create(emitter -> {
-            String parsedData;
-            String packageUrl = MARKET_PLAY_STORE_URL + packageName;
             try {
-                if (Connectivity.isConnected(context)) {
-                    parsedData = Jsoup.connect(MARKET_PLAY_STORE_URL + packageName)
+                String packageUrl = MARKET_PLAY_STORE_URL + packageName;
+                if (isConnected(context)) {
+                    String parsedData = Jsoup.connect(packageUrl)
                             .timeout(DEFAULT_TIMEOUT)
                             .ignoreHttpErrors(true)
-                            .referrer("http://www.google.com").get()
-                            .select("div[itemprop=" + tag + "]").first()
+                            .referrer(DEFAULT_REFERER)
+                            .get()
+                            .select("div[itemprop=" + tag + "]")
+                            .first()
                             .ownText();
 
-                    PlayPackageInfo playPackageInfo = createPlayPackageInfoFromTag(packageName,
-                            packageUrl, tag, parsedData);
+                    PlayPackageInfo playPackageInfo = new PlayPackageInfo(packageName, packageUrl);
+                    playPackageInfo = updatePlayPackageInfoFromTag(playPackageInfo, tag, parsedData);
                     emitter.onSuccess(playPackageInfo);
                 } else {
                     emitter.onError(new NetworkNotAvailableException("Internet connection is not available."));
@@ -119,19 +117,22 @@ public class RxMagnetoInternal {
      */
     static Single<PlayPackageInfo> getPlayStoreAppRating(final Context context, final String packageName) {
         return Single.create(emitter -> {
-            String parsedData;
-            String packageUrl = MARKET_PLAY_STORE_URL + packageName;
             try {
-                if (Connectivity.isConnected(context)) {
-                    parsedData = Jsoup.connect(packageUrl)
+                if (isConnected(context)) {
+                    String packageUrl = MARKET_PLAY_STORE_URL + packageName;
+                    String tag = TAG_PLAY_STORE_APP_RATING;
+
+                    String parsedData = Jsoup.connect(packageUrl)
                             .timeout(DEFAULT_TIMEOUT)
                             .ignoreHttpErrors(true)
-                            .referrer("http://www.google.com").get()
-                            .select("div[class=" + TAG_PLAY_STORE_APP_RATING + "]").first()
+                            .referrer(DEFAULT_REFERER)
+                            .get()
+                            .select("div[class=" + TAG_PLAY_STORE_APP_RATING + "]")
+                            .first()
                             .ownText();
 
-                    PlayPackageInfo playPackageInfo = createPlayPackageInfoFromTag(packageName,
-                            packageUrl, TAG_PLAY_STORE_APP_RATING, parsedData);
+                    PlayPackageInfo playPackageInfo = new PlayPackageInfo(packageName, packageUrl);
+                    playPackageInfo = updatePlayPackageInfoFromTag(playPackageInfo, tag, parsedData);
                     emitter.onSuccess(playPackageInfo);
                 } else {
                     emitter.onError(new NetworkNotAvailableException("Internet connection is not available."));
@@ -150,21 +151,23 @@ public class RxMagnetoInternal {
      * @return
      */
     static Single<PlayPackageInfo> getPlayStoreAppRatingsCount(final Context context,
-                                                          final String packageName) {
+                                                               final String packageName) {
         return Single.create(emitter -> {
-            String parsedData;
-            String packageUrl = MARKET_PLAY_STORE_URL + packageName;
             try {
-                if (Connectivity.isConnected(context)) {
-                    parsedData = Jsoup.connect(packageUrl)
+                String packageUrl = MARKET_PLAY_STORE_URL + packageName;
+                String tag = TAG_PLAY_STORE_APP_RATING_COUNT;
+                if (isConnected(context)) {
+                    String parsedData = Jsoup.connect(packageUrl)
                             .timeout(DEFAULT_TIMEOUT)
                             .ignoreHttpErrors(true)
-                            .referrer("http://www.google.com").get()
-                            .select("span[class=" + TAG_PLAY_STORE_APP_RATING_COUNT + "]").first()
+                            .referrer(DEFAULT_REFERER)
+                            .get()
+                            .select("span[class=" + TAG_PLAY_STORE_APP_RATING_COUNT + "]")
+                            .first()
                             .ownText();
 
-                    PlayPackageInfo playPackageInfo = createPlayPackageInfoFromTag(packageName,
-                            packageUrl, TAG_PLAY_STORE_APP_RATING_COUNT, parsedData);
+                    PlayPackageInfo playPackageInfo = new PlayPackageInfo(packageName, packageUrl);
+                    playPackageInfo = updatePlayPackageInfoFromTag(playPackageInfo, tag, parsedData);
                     emitter.onSuccess(playPackageInfo);
                 } else {
                     emitter.onError(new NetworkNotAvailableException("Network not available"));
@@ -184,16 +187,17 @@ public class RxMagnetoInternal {
      * @return
      */
     static Single<PlayPackageInfo> getPlayStoreRecentChangelogArray(final Context context,
-                                                                          final String packageName) {
+                                                                    final String packageName) {
         return Single.create(emitter -> {
-            String packageUrl = MARKET_PLAY_STORE_URL + packageName;
-            Elements elements;
             try {
-                if (Connectivity.isConnected(context)) {
+                String packageUrl = MARKET_PLAY_STORE_URL + packageName;
+                Elements elements;
+                if (isConnected(context)) {
                     elements = Jsoup.connect(packageUrl)
                             .timeout(DEFAULT_TIMEOUT)
                             .ignoreHttpErrors(true)
-                            .referrer("http://www.google.com").get()
+                            .referrer(DEFAULT_REFERER)
+                            .get()
                             .select(".recent-change");
 
                     int elementSize = elements.size();
@@ -214,9 +218,8 @@ public class RxMagnetoInternal {
         });
     }
 
-    private static PlayPackageInfo createPlayPackageInfoFromTag(String packageName, String packageUrl,
+    private static PlayPackageInfo updatePlayPackageInfoFromTag(PlayPackageInfo playPackageInfo,
                                                                 String tag, String value) {
-        PlayPackageInfo playPackageInfo = new PlayPackageInfo(packageName, packageUrl);
         switch (tag) {
             case TAG_PLAY_STORE_VERSION:
                 playPackageInfo.setPackageVersion(value);
@@ -239,7 +242,6 @@ public class RxMagnetoInternal {
             case TAG_PLAY_STORE_APP_RATING_COUNT:
                 playPackageInfo.setAppRatingCount(value);
                 break;
-            default:
         }
         return playPackageInfo;
     }
