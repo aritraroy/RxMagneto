@@ -35,7 +35,7 @@ import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_VERSION;
 public class RxMagnetoInternal {
 
     private static final int DEFAULT_TIMEOUT = 5000;
-    private static final String DEFAULT_REFERER = "http://www.google.com";
+    private static final String DEFAULT_REFERRER = "http://www.google.com";
     static final String MARKET_PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=";
 
     /**
@@ -90,7 +90,7 @@ public class RxMagnetoInternal {
                     String parsedData = Jsoup.connect(packageUrl)
                             .timeout(DEFAULT_TIMEOUT)
                             .ignoreHttpErrors(true)
-                            .referrer(DEFAULT_REFERER)
+                            .referrer(DEFAULT_REFERRER)
                             .get()
                             .select("div[itemprop=" + tag + "]")
                             .first()
@@ -125,7 +125,7 @@ public class RxMagnetoInternal {
                     String parsedData = Jsoup.connect(packageUrl)
                             .timeout(DEFAULT_TIMEOUT)
                             .ignoreHttpErrors(true)
-                            .referrer(DEFAULT_REFERER)
+                            .referrer(DEFAULT_REFERRER)
                             .get()
                             .select("div[class=" + TAG_PLAY_STORE_APP_RATING + "]")
                             .first()
@@ -160,7 +160,7 @@ public class RxMagnetoInternal {
                     String parsedData = Jsoup.connect(packageUrl)
                             .timeout(DEFAULT_TIMEOUT)
                             .ignoreHttpErrors(true)
-                            .referrer(DEFAULT_REFERER)
+                            .referrer(DEFAULT_REFERRER)
                             .get()
                             .select("span[class=" + TAG_PLAY_STORE_APP_RATING_COUNT + "]")
                             .first()
@@ -196,7 +196,7 @@ public class RxMagnetoInternal {
                     elements = Jsoup.connect(packageUrl)
                             .timeout(DEFAULT_TIMEOUT)
                             .ignoreHttpErrors(true)
-                            .referrer(DEFAULT_REFERER)
+                            .referrer(DEFAULT_REFERRER)
                             .get()
                             .select(".recent-change");
 

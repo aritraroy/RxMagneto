@@ -2,6 +2,8 @@ package com.aritraroy.rxmagneto;
 
 /**
  * Created by aritraroy on 16/08/17.
+ *
+ * A map containing all error codes in RxMagneto
  */
 
 public enum ErrorCodeMap {

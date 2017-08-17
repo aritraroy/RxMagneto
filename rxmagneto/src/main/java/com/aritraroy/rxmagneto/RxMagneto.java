@@ -18,6 +18,7 @@ import io.reactivex.ObservableSource;
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
 import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
 
 import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_APP_RATING;
 import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_APP_RATING_COUNT;
@@ -111,16 +112,13 @@ public class RxMagneto {
      * @return A Single emitting the verified url of the specified package
      */
     public Single<String> grabVerifiedUrl(String packageName) {
-        return validatePlayPackage(context, packageName)
-                            .flatMap(playPackageInfo -> Single.just(playPackageInfo.getPackageUrl()));
-
-                /*.filter(PlayPackageInfo::isUrlValid)
-                .flatMap(new Function<PlayPackageInfo, ObservableSource<PlayPackageInfo>>() {
-                    @Override
-                    public ObservableSource<String> apply(PlayPackageInfo playPackageInfo) throws Exception {
-                        return null;
-                    }
-                }).to;*/
+        if (!TextUtils.isEmpty(packageName)) {
+            return validatePlayPackage(context, packageName)
+                    .filter(PlayPackageInfo::isUrlValid)
+                    .flatMapSingle(playPackageInfo -> Single.just(playPackageInfo.getPackageUrl()));
+        }
+        return Single.error(new RxMagnetoException(ERROR_VERIFIED_ERROR.getErrorCode(),
+                "Failed to grab verified url"));
     }
 
     /**
