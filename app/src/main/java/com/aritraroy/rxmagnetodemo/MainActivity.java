@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -124,8 +125,8 @@ public class MainActivity extends AppCompatActivity {
     private void getPlayStoreUrl(String packageName) {
         final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
 
-        Observable<String> urlObservable = rxMagneto.grabVerifiedUrl(packageName);
-        urlObservable.subscribeOn(Schedulers.io())
+        Single<String> urlSingle = rxMagneto.grabVerifiedUrl(packageName);
+        urlSingle.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
@@ -144,8 +145,8 @@ public class MainActivity extends AppCompatActivity {
         final MaterialDialog progressDialog = showLoading(this,
                 getResources().getString(R.string.message_grabbing));
 
-        Observable<String> versionObservable = rxMagneto.grabVersion(packageName);
-        versionObservable.subscribeOn(Schedulers.io())
+        Single<String> versionSingle = rxMagneto.grabVersion(packageName);
+        versionSingle.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
@@ -165,8 +166,8 @@ public class MainActivity extends AppCompatActivity {
         final MaterialDialog progressDialog = showLoading(this,
                 getResources().getString(R.string.message_grabbing));
 
-        Observable<Boolean> updateAvailableObservable = rxMagneto.isUpgradeAvailable(packageName);
-        updateAvailableObservable.subscribeOn(Schedulers.io())
+        Single<Boolean> updateAvailableSingle = rxMagneto.isUpgradeAvailable(packageName);
+        updateAvailableSingle.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aBoolean -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
@@ -188,8 +189,8 @@ public class MainActivity extends AppCompatActivity {
         final MaterialDialog progressDialog = showLoading(this,
                 getResources().getString(R.string.message_grabbing));
 
-        Observable<String> downloadsObservable = rxMagneto.grabDownloads(packageName);
-        downloadsObservable.subscribeOn(Schedulers.io())
+        Single<String> downloadsSingle = rxMagneto.grabDownloads(packageName);
+        downloadsSingle.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
@@ -210,8 +211,8 @@ public class MainActivity extends AppCompatActivity {
         final MaterialDialog progressDialog = showLoading(this,
                 getResources().getString(R.string.message_grabbing));
 
-        Observable<String> publishedDateObservable = rxMagneto.grabPublishedDate(packageName);
-        publishedDateObservable.subscribeOn(Schedulers.io())
+        Single<String> publishedDateSingle = rxMagneto.grabPublishedDate(packageName);
+        publishedDateSingle.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
@@ -232,8 +233,8 @@ public class MainActivity extends AppCompatActivity {
         final MaterialDialog progressDialog = showLoading(this,
                 getResources().getString(R.string.message_grabbing));
 
-        Observable<String> osRequirementsObservable = rxMagneto.grabOsRequirements(packageName);
-        osRequirementsObservable.subscribeOn(Schedulers.io())
+        Single<String> osRequirementsSingle = rxMagneto.grabOsRequirements(packageName);
+        osRequirementsSingle.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
@@ -254,8 +255,8 @@ public class MainActivity extends AppCompatActivity {
         final MaterialDialog progressDialog = showLoading(this,
                 getResources().getString(R.string.message_grabbing));
 
-        Observable<String> contentRatingObservable = rxMagneto.grabContentRating(packageName);
-        contentRatingObservable.subscribeOn(Schedulers.io())
+        Single<String> contentRatingSingle = rxMagneto.grabContentRating(packageName);
+        contentRatingSingle.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
@@ -276,8 +277,8 @@ public class MainActivity extends AppCompatActivity {
         final MaterialDialog progressDialog = showLoading(this,
                 getResources().getString(R.string.message_grabbing));
 
-        Observable<String> appRatingObservable = rxMagneto.grabAppRating(packageName);
-        appRatingObservable.subscribeOn(Schedulers.io())
+        Single<String> appRatingSingle = rxMagneto.grabAppRating(packageName);
+        appRatingSingle.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
@@ -297,8 +298,8 @@ public class MainActivity extends AppCompatActivity {
     private void getAppRatingsCount(String packageName) {
         final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
 
-        Observable<String> appRatingsCount = rxMagneto.grabAppRatingsCount(packageName);
-        appRatingsCount.subscribeOn(Schedulers.io())
+        Single<String> appRatingsCountSingle = rxMagneto.grabAppRatingsCount(packageName);
+        appRatingsCountSingle.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
@@ -318,8 +319,8 @@ public class MainActivity extends AppCompatActivity {
         final MaterialDialog progressDialog = showLoading(this,
                 getResources().getString(R.string.message_grabbing));
 
-        Observable<String> changelogObservable = rxMagneto.grabPlayStoreRecentChangelog(packageName);
-        changelogObservable.subscribeOn(Schedulers.io())
+        Single<String> changelogSingle = rxMagneto.grabPlayStoreRecentChangelog(packageName);
+        changelogSingle.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
