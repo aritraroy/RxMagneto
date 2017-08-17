@@ -12,13 +12,18 @@ import com.aritraroy.rxmagneto.util.RxMagnetoTags;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import io.reactivex.Maybe;
+import io.reactivex.MaybeSource;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
+import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_APP_RATING;
 import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_APP_RATING_COUNT;
@@ -87,7 +92,8 @@ public class RxMagneto {
      */
     public Single<String> grabUrl(String packageName) {
         if (!TextUtils.isEmpty(packageName)) {
-            return Single.just(MARKET_PLAY_STORE_URL + packageName);
+            return Single.just(MARKET_PLAY_STORE_URL + packageName)
+                    .subscribeOn(Schedulers.trampoline());
         }
         return Single.error(new RxMagnetoException(ErrorCodeMap.ERROR_URL.getErrorCode(),
                 "Failed to grab url."));
@@ -112,10 +118,10 @@ public class RxMagneto {
      * @return A Single emitting the verified url of the specified package
      */
     public Single<String> grabVerifiedUrl(String packageName) {
-        if (!TextUtils.isEmpty(packageName)) {
+        if (context != null && !TextUtils.isEmpty(packageName)) {
             return validatePlayPackage(context, packageName)
-                    .filter(PlayPackageInfo::isUrlValid)
-                    .flatMapSingle(playPackageInfo -> Single.just(playPackageInfo.getPackageUrl()));
+                    .subscribeOn(Schedulers.io())
+                    .flatMap(playPackageInfo -> Single.just(playPackageInfo.getPackageUrl()));
         }
         return Single.error(new RxMagnetoException(ERROR_VERIFIED_ERROR.getErrorCode(),
                 "Failed to grab verified url"));
@@ -140,7 +146,7 @@ public class RxMagneto {
      * @return A Single emitting the version for the specified package
      */
     public Single<String> grabVersion(String packageName) {
-        if (context != null) {
+        if (context != null && !TextUtils.isEmpty(packageName)) {
             return getPlayPackageInfo(context, packageName, TAG_PLAY_STORE_VERSION)
                     .flatMap(playPackageInfo -> Single.just(playPackageInfo.getPackageVersion()));
         }

@@ -49,25 +49,38 @@ public class RxMagnetoInternal {
     static Single<PlayPackageInfo> validatePlayPackage(final Context context,
                                                        final String packageName) {
         return Single.create(emitter -> {
+            HttpURLConnection httpURLConnection = null;
             try {
                 String packageUrl = MARKET_PLAY_STORE_URL + packageName;
                 URL url = new URL(packageUrl);
-                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+
+                httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setRequestMethod("GET");
 
-                if (isConnected(context)) {
-                    httpURLConnection.connect();
-
-                    PlayPackageInfo playPackageInfo = new PlayPackageInfo(packageName, packageUrl);
-                    playPackageInfo.setUrlValid(httpURLConnection.getResponseCode() == 200);
-                    emitter.onSuccess(playPackageInfo);
-                } else {
+                if (!isConnected(context)) {
                     emitter.onError(new NetworkNotAvailableException("Internet connection is not available."));
+                    return;
                 }
+
+                httpURLConnection.connect();
+                boolean isVerified = httpURLConnection.getResponseCode() == 200;
+
+                if (!isVerified) {
+                    emitter.onError(new RxMagnetoException(ERROR_GENERIC.getErrorCode(), "Package url is malformed."));
+                    return;
+                }
+
+                PlayPackageInfo playPackageInfo = new PlayPackageInfo(packageName, packageUrl);
+                playPackageInfo.setUrlValid(httpURLConnection.getResponseCode() == 200);
+                emitter.onSuccess(playPackageInfo);
             } catch (MalformedURLException e) {
                 emitter.onError(new RxMagnetoException(ERROR_GENERIC.getErrorCode(), "Package url is malformed."));
             } catch (IOException e) {
                 emitter.onError(e);
+            } finally {
+                if (httpURLConnection != null) {
+                    httpURLConnection.disconnect();
+                }
             }
         });
     }

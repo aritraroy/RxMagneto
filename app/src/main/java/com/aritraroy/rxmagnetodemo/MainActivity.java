@@ -126,8 +126,7 @@ public class MainActivity extends AppCompatActivity {
         final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
 
         Single<String> urlSingle = rxMagneto.grabVerifiedUrl(packageName);
-        urlSingle.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        urlSingle.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
