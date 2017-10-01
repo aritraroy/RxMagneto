@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 # Created by https://www.gitignore.io/api/android
 
 ### Android ###
@@ -39,11 +42,6 @@ captures/
 # Intellij
 *.iml
 .idea/
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/gradle.xml
-.idea/dictionaries
-.idea/libraries
 
 # External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild
