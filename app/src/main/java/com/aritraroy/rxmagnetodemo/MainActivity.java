@@ -17,13 +17,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.aritraroy.rxmagneto.RxMagneto;
+import com.aritraroy.rxmagneto.core.RxMagneto;
 import com.aritraroy.rxmagnetodemo.domain.FeatureModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;

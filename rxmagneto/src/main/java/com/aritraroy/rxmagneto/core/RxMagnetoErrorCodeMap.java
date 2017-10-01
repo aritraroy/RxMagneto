@@ -1,11 +1,9 @@
-package com.aritraroy.rxmagneto;
+package com.aritraroy.rxmagneto.core;
 
 /**
- * Created by aritraroy on 16/08/17.
- * <p>
- * A map containing all error codes in RxMagneto
+ * A map containing all error codes returned by RxMagneto
  */
-public enum ErrorCodeMap {
+public enum RxMagnetoErrorCodeMap {
     ERROR_GENERIC(100),
     ERROR_URL(101),
     ERROR_VERIFIED_ERROR(102),
@@ -21,7 +19,7 @@ public enum ErrorCodeMap {
 
     private int errorCode;
 
-    ErrorCodeMap(int errorCode) {
+    RxMagnetoErrorCodeMap(int errorCode) {
         this.errorCode = errorCode;
     }
 

@@ -11,6 +11,20 @@ import android.support.annotation.Nullable;
 public class Connectivity {
 
     /**
+     * Check if the device is connected to the network or not
+     *
+     * @param context The application context
+     * @return The connectivity status of the device
+     */
+    public static boolean isConnected(Context context) {
+        if (context != null) {
+            NetworkInfo info = getNetworkInfo(context);
+            return info != null && info.isConnected();
+        }
+        return false;
+    }
+
+    /**
      * Get the network information of the device
      *
      * @param context The application context
@@ -24,19 +38,5 @@ public class Connectivity {
             return cm.getActiveNetworkInfo();
         }
         return null;
-    }
-
-    /**
-     * Check if the device is connected to the network or not
-     *
-     * @param context The application context
-     * @return The connectivity status of the device
-     */
-    public static boolean isConnected(Context context) {
-        if (context != null) {
-            NetworkInfo info = getNetworkInfo(context);
-            return (info != null && info.isConnected());
-        }
-        return false;
     }
 }

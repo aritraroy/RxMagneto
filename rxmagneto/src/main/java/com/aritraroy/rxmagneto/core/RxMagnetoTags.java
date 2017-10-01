@@ -1,11 +1,6 @@
-package com.aritraroy.rxmagneto.util;
-
-/**
- * Created by aritraroy on 18/02/17.
- */
+package com.aritraroy.rxmagneto.core;
 
 public class RxMagnetoTags {
-
     public static final String TAG_PLAY_STORE_VERSION = "softwareVersion";
     public static final String TAG_PLAY_STORE_DOWNLOADS = "numDownloads";
     public static final String TAG_PLAY_STORE_LAST_PUBLISHED_DATE = "datePublished";

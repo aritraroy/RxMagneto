@@ -1,7 +1,8 @@
-package com.aritraroy.rxmagneto;
+package com.aritraroy.rxmagneto.core;
 
 import android.content.Context;
 
+import com.aritraroy.rxmagneto.R;
 import com.aritraroy.rxmagneto.domain.PlayPackageInfo;
 import com.aritraroy.rxmagneto.exceptions.NetworkNotAvailableException;
 import com.aritraroy.rxmagneto.exceptions.RxMagnetoException;
@@ -18,15 +19,7 @@ import java.util.Arrays;
 
 import io.reactivex.Single;
 
-import static com.aritraroy.rxmagneto.ErrorCodeMap.*;
 import static com.aritraroy.rxmagneto.util.Connectivity.*;
-import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_APP_RATING;
-import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_APP_RATING_COUNT;
-import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_CONTENT_RATING;
-import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_DOWNLOADS;
-import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_LAST_PUBLISHED_DATE;
-import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_OS_REQUIREMENTS;
-import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_VERSION;
 
 /**
  * The internal class to facilitate fetching of Play Store information
@@ -59,7 +52,7 @@ public class RxMagnetoInternal {
                 boolean isVerified = httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK;
 
                 if (!isVerified) {
-                    emitter.onError(new RxMagnetoException(ERROR_GENERIC.getErrorCode(),
+                    emitter.onError(new RxMagnetoException(RxMagnetoErrorCodeMap.ERROR_GENERIC.getErrorCode(),
                             context.getString(R.string.message_package_url_malformed)));
                     return;
                 }
@@ -71,7 +64,7 @@ public class RxMagnetoInternal {
 
                 emitter.onSuccess(playPackageInfo);
             } catch (MalformedURLException e) {
-                emitter.onError(new RxMagnetoException(ERROR_GENERIC.getErrorCode(),
+                emitter.onError(new RxMagnetoException(RxMagnetoErrorCodeMap.ERROR_GENERIC.getErrorCode(),
                         context.getString(R.string.message_package_url_malformed)));
             } catch (IOException e) {
                 emitter.onError(e);
@@ -132,12 +125,12 @@ public class RxMagnetoInternal {
                         .ignoreHttpErrors(true)
                         .referrer(DEFAULT_REFERRER)
                         .get()
-                        .select("div[class=" + TAG_PLAY_STORE_APP_RATING + "]")
+                        .select("div[class=" + RxMagnetoTags.TAG_PLAY_STORE_APP_RATING + "]")
                         .first()
                         .ownText();
 
                 PlayPackageInfo.Builder builder = new PlayPackageInfo.Builder(packageName, packageUrl);
-                builder = updatePlayPackageInfoFromTag(builder, TAG_PLAY_STORE_APP_RATING, parsedData);
+                builder = updatePlayPackageInfoFromTag(builder, RxMagnetoTags.TAG_PLAY_STORE_APP_RATING, parsedData);
 
                 emitter.onSuccess(builder.build());
             } catch (Exception e) {
@@ -163,12 +156,12 @@ public class RxMagnetoInternal {
                         .ignoreHttpErrors(true)
                         .referrer(DEFAULT_REFERRER)
                         .get()
-                        .select("span[class=" + TAG_PLAY_STORE_APP_RATING_COUNT + "]")
+                        .select("span[class=" + RxMagnetoTags.TAG_PLAY_STORE_APP_RATING_COUNT + "]")
                         .first()
                         .ownText();
 
                 PlayPackageInfo.Builder builder = new PlayPackageInfo.Builder(packageName, packageUrl);
-                builder = updatePlayPackageInfoFromTag(builder, TAG_PLAY_STORE_APP_RATING, parsedData);
+                builder = updatePlayPackageInfoFromTag(builder, RxMagnetoTags.TAG_PLAY_STORE_APP_RATING, parsedData);
 
                 emitter.onSuccess(builder.build());
             } catch (Exception e) {
@@ -215,25 +208,25 @@ public class RxMagnetoInternal {
     private static PlayPackageInfo.Builder updatePlayPackageInfoFromTag(PlayPackageInfo.Builder builder,
                                                                         String tag, String value) {
         switch (tag) {
-            case TAG_PLAY_STORE_VERSION:
+            case RxMagnetoTags.TAG_PLAY_STORE_VERSION:
                 builder.setPackageVersion(value);
                 break;
-            case TAG_PLAY_STORE_DOWNLOADS:
+            case RxMagnetoTags.TAG_PLAY_STORE_DOWNLOADS:
                 builder.setDownloads(value);
                 break;
-            case TAG_PLAY_STORE_LAST_PUBLISHED_DATE:
+            case RxMagnetoTags.TAG_PLAY_STORE_LAST_PUBLISHED_DATE:
                 builder.setPublishedDate(value);
                 break;
-            case TAG_PLAY_STORE_OS_REQUIREMENTS:
+            case RxMagnetoTags.TAG_PLAY_STORE_OS_REQUIREMENTS:
                 builder.setOsRequirements(value);
                 break;
-            case TAG_PLAY_STORE_CONTENT_RATING:
+            case RxMagnetoTags.TAG_PLAY_STORE_CONTENT_RATING:
                 builder.setContentRating(value);
                 break;
-            case TAG_PLAY_STORE_APP_RATING:
+            case RxMagnetoTags.TAG_PLAY_STORE_APP_RATING:
                 builder.setAppRating(value);
                 break;
-            case TAG_PLAY_STORE_APP_RATING_COUNT:
+            case RxMagnetoTags.TAG_PLAY_STORE_APP_RATING_COUNT:
                 builder.setAppRatingCount(value);
                 break;
         }

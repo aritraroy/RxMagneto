@@ -9,7 +9,7 @@ A fast, light-weight and powerful Play Store information fetcher for Android.
 
 This library allows you to **fetch various live information from Play Store** of your app or any other app of your choice. With just a few lines of code, you can get access to a lot of useful app data fetched fresh from the Play Store.
 
-It has been named after the famous anti-villian from X-Men. This library has been **completely written using RxJava** giving you powerful controls to make the most use of it.
+It has been named after the famous anti-villain from X-Men. This library has been **completely written using RxJava** giving you powerful controls to make the most use of it.
 
 ![RxMagneto](https://github.com/aritraroy/RxMagneto/blob/master/raw/github_screenshot.png)
 
