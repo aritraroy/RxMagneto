@@ -2,10 +2,9 @@ package com.aritraroy.rxmagneto;
 
 /**
  * Created by aritraroy on 16/08/17.
- *
+ * <p>
  * A map containing all error codes in RxMagneto
  */
-
 public enum ErrorCodeMap {
     ERROR_GENERIC(100),
     ERROR_URL(101),

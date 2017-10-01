@@ -4,25 +4,13 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
-import com.aritraroy.rxmagneto.domain.PlayPackageInfo;
 import com.aritraroy.rxmagneto.exceptions.AppVersionNotFoundException;
 import com.aritraroy.rxmagneto.exceptions.RxMagnetoException;
 import com.aritraroy.rxmagneto.util.Constants;
-import com.aritraroy.rxmagneto.util.RxMagnetoTags;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
-import io.reactivex.Maybe;
-import io.reactivex.MaybeSource;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
-import io.reactivex.SingleSource;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_APP_RATING;
@@ -35,8 +23,16 @@ import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_PUBLISHED_DATE;
 import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_UPDATE;
 import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_VERIFIED_ERROR;
 import static com.aritraroy.rxmagneto.ErrorCodeMap.ERROR_VERSION;
-import static com.aritraroy.rxmagneto.RxMagnetoInternal.*;
-import static com.aritraroy.rxmagneto.util.RxMagnetoTags.*;
+import static com.aritraroy.rxmagneto.RxMagnetoInternal.MARKET_PLAY_STORE_URL;
+import static com.aritraroy.rxmagneto.RxMagnetoInternal.getPlayPackageInfo;
+import static com.aritraroy.rxmagneto.RxMagnetoInternal.getPlayStoreAppRating;
+import static com.aritraroy.rxmagneto.RxMagnetoInternal.getPlayStoreAppRatingsCount;
+import static com.aritraroy.rxmagneto.RxMagnetoInternal.getPlayStoreRecentChangelogArray;
+import static com.aritraroy.rxmagneto.RxMagnetoInternal.validatePlayPackage;
+import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_CONTENT_RATING;
+import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_DOWNLOADS;
+import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_LAST_PUBLISHED_DATE;
+import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_OS_REQUIREMENTS;
 import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_VERSION;
 
 /**
@@ -147,7 +143,9 @@ public class RxMagneto {
      */
     public Single<String> grabVersion(String packageName) {
         if (context != null && !TextUtils.isEmpty(packageName)) {
-            return getPlayPackageInfo(context, packageName, TAG_PLAY_STORE_VERSION)
+            return validatePlayPackage(context, packageName)
+                    .subscribeOn(Schedulers.io())
+                    .flatMap(playPackageInfo -> getPlayPackageInfo(context, packageName, TAG_PLAY_STORE_VERSION))
                     .flatMap(playPackageInfo -> Single.just(playPackageInfo.getPackageVersion()));
         }
         return Single.error(new RxMagnetoException(ERROR_VERSION.getErrorCode(),

@@ -99,22 +99,23 @@ public class RxMagnetoInternal {
         return Single.create(emitter -> {
             try {
                 String packageUrl = MARKET_PLAY_STORE_URL + packageName;
-                if (isConnected(context)) {
-                    String parsedData = Jsoup.connect(packageUrl)
-                            .timeout(DEFAULT_TIMEOUT)
-                            .ignoreHttpErrors(true)
-                            .referrer(DEFAULT_REFERRER)
-                            .get()
-                            .select("div[itemprop=" + tag + "]")
-                            .first()
-                            .ownText();
-
-                    PlayPackageInfo playPackageInfo = new PlayPackageInfo(packageName, packageUrl);
-                    playPackageInfo = updatePlayPackageInfoFromTag(playPackageInfo, tag, parsedData);
-                    emitter.onSuccess(playPackageInfo);
-                } else {
+                if (!isConnected(context)) {
                     emitter.onError(new NetworkNotAvailableException("Internet connection is not available."));
+                    return;
                 }
+
+                String parsedData = Jsoup.connect(packageUrl)
+                        .timeout(DEFAULT_TIMEOUT)
+                        .ignoreHttpErrors(true)
+                        .referrer(DEFAULT_REFERRER)
+                        .get()
+                        .select("div[itemprop=" + tag + "]")
+                        .first()
+                        .ownText();
+
+                PlayPackageInfo playPackageInfo = new PlayPackageInfo(packageName, packageUrl);
+                playPackageInfo = updatePlayPackageInfoFromTag(playPackageInfo, tag, parsedData);
+                emitter.onSuccess(playPackageInfo);
             } catch (Exception e) {
                 emitter.onError(e);
             }

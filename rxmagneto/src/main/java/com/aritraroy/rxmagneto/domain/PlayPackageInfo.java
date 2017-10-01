@@ -1,19 +1,17 @@
 package com.aritraroy.rxmagneto.domain;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import io.reactivex.annotations.Nullable;
 
 /**
- * Created by aritraroy on 16/08/17.
- *
- * Holds information about a particular Play Store package
+ * Holds data about a particular package available on Play Store
  */
 public class PlayPackageInfo {
+
     private final String packageName;
     private final String packageUrl;
+
     @Nullable
     private Boolean isUrlValid;
     @Nullable
