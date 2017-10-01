@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RxMagneto</string>
+    <string name="message_internet_not_available">Internet connection is not available.</string>
+    <string name="message_package_url_malformed">Package url is malformed.</string>
 </resources>

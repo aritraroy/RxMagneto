@@ -29,23 +29,15 @@ import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_OS_REQUI
 import static com.aritraroy.rxmagneto.util.RxMagnetoTags.TAG_PLAY_STORE_VERSION;
 
 /**
- * Created by aritraroy on 09/02/17.
+ * The internal class to facilitate fetching of Play Store information
  */
-
 public class RxMagnetoInternal {
 
     private static final int DEFAULT_TIMEOUT = 5000;
     private static final String DEFAULT_REFERRER = "http://www.google.com";
+
     static final String MARKET_PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=";
 
-    /**
-     * Check if the package url is a valid Google Play Store page url
-     *
-     * @param context     The application context
-     * @param packageName The package name of the application
-     * @return Always returns a Single with {@code true} if the package is valid,
-     * otherwise calls {@code onError()}
-     */
     static Single<PlayPackageInfo> validatePlayPackage(final Context context,
                                                        final String packageName) {
         return Single.create(emitter -> {
@@ -58,23 +50,29 @@ public class RxMagnetoInternal {
                 httpURLConnection.setRequestMethod("GET");
 
                 if (!isConnected(context)) {
-                    emitter.onError(new NetworkNotAvailableException("Internet connection is not available."));
+                    emitter.onError(new NetworkNotAvailableException(
+                            context.getString(R.string.message_internet_not_available)));
                     return;
                 }
 
                 httpURLConnection.connect();
-                boolean isVerified = httpURLConnection.getResponseCode() == 200;
+                boolean isVerified = httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK;
 
                 if (!isVerified) {
-                    emitter.onError(new RxMagnetoException(ERROR_GENERIC.getErrorCode(), "Package url is malformed."));
+                    emitter.onError(new RxMagnetoException(ERROR_GENERIC.getErrorCode(),
+                            context.getString(R.string.message_package_url_malformed)));
                     return;
                 }
 
-                PlayPackageInfo playPackageInfo = new PlayPackageInfo(packageName, packageUrl);
-                playPackageInfo.setUrlValid(httpURLConnection.getResponseCode() == 200);
+                boolean isUrlValid = httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK;
+                PlayPackageInfo playPackageInfo = new PlayPackageInfo.Builder(packageName, packageUrl)
+                        .setIsUrlValid(isUrlValid)
+                        .build();
+
                 emitter.onSuccess(playPackageInfo);
             } catch (MalformedURLException e) {
-                emitter.onError(new RxMagnetoException(ERROR_GENERIC.getErrorCode(), "Package url is malformed."));
+                emitter.onError(new RxMagnetoException(ERROR_GENERIC.getErrorCode(),
+                        context.getString(R.string.message_package_url_malformed)));
             } catch (IOException e) {
                 emitter.onError(e);
             } finally {
@@ -85,22 +83,16 @@ public class RxMagnetoInternal {
         });
     }
 
-    /**
-     * Gets item properties in string format from the Play Store page
-     *
-     * @param context     The application context
-     * @param packageName The package name of the application
-     * @param tag         The item property specification
-     * @return
-     */
     static Single<PlayPackageInfo> getPlayPackageInfo(final Context context,
                                                       final String packageName,
                                                       final String tag) {
         return Single.create(emitter -> {
             try {
                 String packageUrl = MARKET_PLAY_STORE_URL + packageName;
+
                 if (!isConnected(context)) {
-                    emitter.onError(new NetworkNotAvailableException("Internet connection is not available."));
+                    emitter.onError(new NetworkNotAvailableException(context
+                            .getString(R.string.message_internet_not_available)));
                     return;
                 }
 
@@ -113,8 +105,106 @@ public class RxMagnetoInternal {
                         .first()
                         .ownText();
 
-                PlayPackageInfo playPackageInfo = new PlayPackageInfo(packageName, packageUrl);
-                playPackageInfo = updatePlayPackageInfoFromTag(playPackageInfo, tag, parsedData);
+                PlayPackageInfo.Builder builder = new PlayPackageInfo.Builder(packageName, packageUrl);
+                builder = updatePlayPackageInfoFromTag(builder, tag, parsedData);
+
+                emitter.onSuccess(builder.build());
+            } catch (Exception e) {
+                emitter.onError(e);
+            }
+        });
+    }
+
+    static Single<PlayPackageInfo> getPlayStoreAppRating(final Context context,
+                                                         final String packageName) {
+        return Single.create(emitter -> {
+            try {
+                String packageUrl = MARKET_PLAY_STORE_URL + packageName;
+
+                if (!isConnected(context)) {
+                    emitter.onError(new NetworkNotAvailableException(context
+                            .getString(R.string.message_internet_not_available)));
+                    return;
+                }
+
+                String parsedData = Jsoup.connect(packageUrl)
+                        .timeout(DEFAULT_TIMEOUT)
+                        .ignoreHttpErrors(true)
+                        .referrer(DEFAULT_REFERRER)
+                        .get()
+                        .select("div[class=" + TAG_PLAY_STORE_APP_RATING + "]")
+                        .first()
+                        .ownText();
+
+                PlayPackageInfo.Builder builder = new PlayPackageInfo.Builder(packageName, packageUrl);
+                builder = updatePlayPackageInfoFromTag(builder, TAG_PLAY_STORE_APP_RATING, parsedData);
+
+                emitter.onSuccess(builder.build());
+            } catch (Exception e) {
+                emitter.onError(e);
+            }
+        });
+    }
+
+    static Single<PlayPackageInfo> getPlayStoreAppRatingsCount(final Context context,
+                                                               final String packageName) {
+        return Single.create(emitter -> {
+            try {
+                String packageUrl = MARKET_PLAY_STORE_URL + packageName;
+
+                if (!isConnected(context)) {
+                    emitter.onError(new NetworkNotAvailableException(context
+                            .getString(R.string.message_internet_not_available)));
+                    return;
+                }
+
+                String parsedData = Jsoup.connect(packageUrl)
+                        .timeout(DEFAULT_TIMEOUT)
+                        .ignoreHttpErrors(true)
+                        .referrer(DEFAULT_REFERRER)
+                        .get()
+                        .select("span[class=" + TAG_PLAY_STORE_APP_RATING_COUNT + "]")
+                        .first()
+                        .ownText();
+
+                PlayPackageInfo.Builder builder = new PlayPackageInfo.Builder(packageName, packageUrl);
+                builder = updatePlayPackageInfoFromTag(builder, TAG_PLAY_STORE_APP_RATING, parsedData);
+
+                emitter.onSuccess(builder.build());
+            } catch (Exception e) {
+                emitter.onError(e);
+            }
+        });
+    }
+
+    static Single<PlayPackageInfo> getPlayStoreRecentChangelogArray(final Context context,
+                                                                    final String packageName) {
+        return Single.create(emitter -> {
+            try {
+                String packageUrl = MARKET_PLAY_STORE_URL + packageName;
+
+                if (!isConnected(context)) {
+                    emitter.onError(new NetworkNotAvailableException(context
+                            .getString(R.string.message_internet_not_available)));
+                    return;
+                }
+
+                Elements elements = Jsoup.connect(packageUrl)
+                        .timeout(DEFAULT_TIMEOUT)
+                        .ignoreHttpErrors(true)
+                        .referrer(DEFAULT_REFERRER)
+                        .get()
+                        .select(".recent-change");
+
+                int elementSize = elements.size();
+                String[] parsedDataArray = new String[elementSize];
+                for (int i = 0; i < elementSize; i++) {
+                    parsedDataArray[i] = elements.get(i).ownText();
+                }
+
+                PlayPackageInfo playPackageInfo = new PlayPackageInfo.Builder(packageName, packageUrl)
+                        .setChangelogArray(new ArrayList<>(Arrays.asList(parsedDataArray)))
+                        .build();
                 emitter.onSuccess(playPackageInfo);
             } catch (Exception e) {
                 emitter.onError(e);
@@ -122,141 +212,31 @@ public class RxMagnetoInternal {
         });
     }
 
-    /**
-     * Gets the app rating from the Play Store page of the given package
-     *
-     * @param context     The application context
-     * @param packageName The package name of the application
-     * @return
-     */
-    static Single<PlayPackageInfo> getPlayStoreAppRating(final Context context, final String packageName) {
-        return Single.create(emitter -> {
-            try {
-                if (isConnected(context)) {
-                    String packageUrl = MARKET_PLAY_STORE_URL + packageName;
-                    String tag = TAG_PLAY_STORE_APP_RATING;
-
-                    String parsedData = Jsoup.connect(packageUrl)
-                            .timeout(DEFAULT_TIMEOUT)
-                            .ignoreHttpErrors(true)
-                            .referrer(DEFAULT_REFERRER)
-                            .get()
-                            .select("div[class=" + TAG_PLAY_STORE_APP_RATING + "]")
-                            .first()
-                            .ownText();
-
-                    PlayPackageInfo playPackageInfo = new PlayPackageInfo(packageName, packageUrl);
-                    playPackageInfo = updatePlayPackageInfoFromTag(playPackageInfo, tag, parsedData);
-                    emitter.onSuccess(playPackageInfo);
-                } else {
-                    emitter.onError(new NetworkNotAvailableException("Internet connection is not available."));
-                }
-            } catch (Exception e) {
-                emitter.onError(e);
-            }
-        });
-    }
-
-    /**
-     * Gets the app ratings count from the Play Store page of the given package
-     *
-     * @param context     The application context
-     * @param packageName The package name of the application
-     * @return
-     */
-    static Single<PlayPackageInfo> getPlayStoreAppRatingsCount(final Context context,
-                                                               final String packageName) {
-        return Single.create(emitter -> {
-            try {
-                String packageUrl = MARKET_PLAY_STORE_URL + packageName;
-                String tag = TAG_PLAY_STORE_APP_RATING_COUNT;
-                if (isConnected(context)) {
-                    String parsedData = Jsoup.connect(packageUrl)
-                            .timeout(DEFAULT_TIMEOUT)
-                            .ignoreHttpErrors(true)
-                            .referrer(DEFAULT_REFERRER)
-                            .get()
-                            .select("span[class=" + TAG_PLAY_STORE_APP_RATING_COUNT + "]")
-                            .first()
-                            .ownText();
-
-                    PlayPackageInfo playPackageInfo = new PlayPackageInfo(packageName, packageUrl);
-                    playPackageInfo = updatePlayPackageInfoFromTag(playPackageInfo, tag, parsedData);
-                    emitter.onSuccess(playPackageInfo);
-                } else {
-                    emitter.onError(new NetworkNotAvailableException("Network not available"));
-                }
-            } catch (Exception e) {
-                emitter.onError(e);
-            }
-        });
-    }
-
-    /**
-     * Gets the changelog or the "What's New" section from the Play Store page of the
-     * given package
-     *
-     * @param context     The application context
-     * @param packageName The package name of the application
-     * @return
-     */
-    static Single<PlayPackageInfo> getPlayStoreRecentChangelogArray(final Context context,
-                                                                    final String packageName) {
-        return Single.create(emitter -> {
-            try {
-                String packageUrl = MARKET_PLAY_STORE_URL + packageName;
-                Elements elements;
-                if (isConnected(context)) {
-                    elements = Jsoup.connect(packageUrl)
-                            .timeout(DEFAULT_TIMEOUT)
-                            .ignoreHttpErrors(true)
-                            .referrer(DEFAULT_REFERRER)
-                            .get()
-                            .select(".recent-change");
-
-                    int elementSize = elements.size();
-                    String[] parsedDataArray = new String[elementSize];
-                    for (int i = 0; i < elementSize; i++) {
-                        parsedDataArray[i] = elements.get(i).ownText();
-                    }
-
-                    PlayPackageInfo playPackageInfo = new PlayPackageInfo(packageName, packageUrl);
-                    playPackageInfo.setChangelogArray(new ArrayList<>(Arrays.asList(parsedDataArray)));
-                    emitter.onSuccess(playPackageInfo);
-                } else {
-                    emitter.onError(new NetworkNotAvailableException("Internet connection is not available."));
-                }
-            } catch (Exception e) {
-                emitter.onError(e);
-            }
-        });
-    }
-
-    private static PlayPackageInfo updatePlayPackageInfoFromTag(PlayPackageInfo playPackageInfo,
-                                                                String tag, String value) {
+    private static PlayPackageInfo.Builder updatePlayPackageInfoFromTag(PlayPackageInfo.Builder builder,
+                                                                        String tag, String value) {
         switch (tag) {
             case TAG_PLAY_STORE_VERSION:
-                playPackageInfo.setPackageVersion(value);
+                builder.setPackageVersion(value);
                 break;
             case TAG_PLAY_STORE_DOWNLOADS:
-                playPackageInfo.setDownloads(value);
+                builder.setDownloads(value);
                 break;
             case TAG_PLAY_STORE_LAST_PUBLISHED_DATE:
-                playPackageInfo.setPublishedDate(value);
+                builder.setPublishedDate(value);
                 break;
             case TAG_PLAY_STORE_OS_REQUIREMENTS:
-                playPackageInfo.setOsRequirements(value);
+                builder.setOsRequirements(value);
                 break;
             case TAG_PLAY_STORE_CONTENT_RATING:
-                playPackageInfo.setContentRating(value);
+                builder.setContentRating(value);
                 break;
             case TAG_PLAY_STORE_APP_RATING:
-                playPackageInfo.setAppRating(value);
+                builder.setAppRating(value);
                 break;
             case TAG_PLAY_STORE_APP_RATING_COUNT:
-                playPackageInfo.setAppRatingCount(value);
+                builder.setAppRatingCount(value);
                 break;
         }
-        return playPackageInfo;
+        return builder;
     }
 }

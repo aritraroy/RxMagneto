@@ -2,38 +2,35 @@ package com.aritraroy.rxmagneto.domain;
 
 import java.util.List;
 
-import io.reactivex.annotations.Nullable;
-
 /**
- * Holds data about a particular package available on Play Store
+ * Container to hold data of a particular package available on Play Store
  */
 public class PlayPackageInfo {
 
     private final String packageName;
     private final String packageUrl;
+    private final boolean isUrlValid;
+    private final String packageVersion;
+    private final String downloads;
+    private final String publishedDate;
+    private final String osRequirements;
+    private final String contentRating;
+    private final String appRating;
+    private final String appRatingCount;
+    private final List<String> changelogArray;
 
-    @Nullable
-    private Boolean isUrlValid;
-    @Nullable
-    private String packageVersion;
-    @Nullable
-    private String downloads;
-    @Nullable
-    private String publishedDate;
-    @Nullable
-    private String osRequirements;
-    @Nullable
-    private String contentRating;
-    @Nullable
-    private String appRating;
-    @Nullable
-    private String appRatingCount;
-    @Nullable
-    private List<String> changelogArray;
-
-    public PlayPackageInfo(String packageName, String packageUrl) {
-        this.packageName = packageName;
-        this.packageUrl = packageUrl;
+    private PlayPackageInfo(Builder builder) {
+        packageName = builder.packageName;
+        packageUrl = builder.packageUrl;
+        isUrlValid = builder.isUrlValid;
+        packageVersion = builder.packageVersion;
+        downloads = builder.downloads;
+        publishedDate = builder.publishedDate;
+        osRequirements = builder.osRequirements;
+        contentRating = builder.contentRating;
+        appRating = builder.appRating;
+        appRatingCount = builder.appRatingCount;
+        changelogArray = builder.changelogArray;
     }
 
     public String getPackageName() {
@@ -48,110 +45,104 @@ public class PlayPackageInfo {
         return isUrlValid;
     }
 
-    public void setUrlValid(Boolean urlValid) {
-        isUrlValid = urlValid;
-    }
-
     public String getPackageVersion() {
         return packageVersion;
-    }
-
-    public void setPackageVersion(String packageVersion) {
-        this.packageVersion = packageVersion;
     }
 
     public String getDownloads() {
         return downloads;
     }
 
-    public void setDownloads(String downloads) {
-        this.downloads = downloads;
-    }
-
     public String getPublishedDate() {
         return publishedDate;
-    }
-
-    public void setPublishedDate(String publishedDate) {
-        this.publishedDate = publishedDate;
     }
 
     public String getOsRequirements() {
         return osRequirements;
     }
 
-    public void setOsRequirements(String osRequirements) {
-        this.osRequirements = osRequirements;
-    }
-
     public String getContentRating() {
         return contentRating;
-    }
-
-    public void setContentRating(String contentRating) {
-        this.contentRating = contentRating;
     }
 
     public String getAppRating() {
         return appRating;
     }
 
-    public void setAppRating(String appRating) {
-        this.appRating = appRating;
-    }
-
     public String getAppRatingCount() {
         return appRatingCount;
-    }
-
-    public void setAppRatingCount(String appRatingCount) {
-        this.appRatingCount = appRatingCount;
     }
 
     public List<String> getChangelogArray() {
         return changelogArray;
     }
 
-    public void setChangelogArray(List<String> changelogArray) {
-        this.changelogArray = changelogArray;
-    }
+    public static class Builder {
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        private String packageName;
+        private String packageUrl;
+        private Boolean isUrlValid;
+        private String packageVersion;
+        private String downloads;
+        private String publishedDate;
+        private String osRequirements;
+        private String contentRating;
+        private String appRating;
+        private String appRatingCount;
+        private List<String> changelogArray;
 
-        PlayPackageInfo that = (PlayPackageInfo) o;
+        public Builder(String packageName, String packageUrl) {
+            this.packageName = packageName;
+            this.packageUrl = packageUrl;
+        }
 
-        if (packageName != null ? !packageName.equals(that.packageName) : that.packageName != null)
-            return false;
-        if (packageUrl != null ? !packageUrl.equals(that.packageUrl) : that.packageUrl != null)
-            return false;
-        if (isUrlValid != null ? !isUrlValid.equals(that.isUrlValid) : that.isUrlValid != null)
-            return false;
-        if (packageVersion != null ? !packageVersion.equals(that.packageVersion) : that.packageVersion != null)
-            return false;
-        return downloads != null ? downloads.equals(that.downloads) : that.downloads == null;
-    }
+        public Builder setIsUrlValid(boolean isUrlValid) {
+            this.isUrlValid = isUrlValid;
+            return this;
+        }
 
-    @Override
-    public int hashCode() {
-        int result = packageName != null ? packageName.hashCode() : 0;
-        result = 31 * result + (packageUrl != null ? packageUrl.hashCode() : 0);
-        result = 31 * result + (isUrlValid != null ? isUrlValid.hashCode() : 0);
-        result = 31 * result + (packageVersion != null ? packageVersion.hashCode() : 0);
-        result = 31 * result + (downloads != null ? downloads.hashCode() : 0);
-        return result;
-    }
+        public Builder setPackageVersion(String packageVersion) {
+            this.packageVersion = packageVersion;
+            return this;
+        }
 
-    @Override
-    public String toString() {
-        return "PlayPackageInfo{" +
-                "packageName='" + packageName + '\'' +
-                ", packageUrl='" + packageUrl + '\'' +
-                ", isUrlValid=" + isUrlValid +
-                ", packageVersion='" + packageVersion + '\'' +
-                ", downloads='" + downloads + '\'' +
-                '}';
+        public Builder setDownloads(String downloads) {
+            this.downloads = downloads;
+            return this;
+        }
+
+        public Builder setPublishedDate(String publishedDate) {
+            this.publishedDate = publishedDate;
+            return this;
+        }
+
+        public Builder setOsRequirements(String osRequirements) {
+            this.osRequirements = osRequirements;
+            return this;
+        }
+
+        public Builder setContentRating(String contentRating) {
+            this.contentRating = contentRating;
+            return this;
+        }
+
+        public Builder setAppRating(String appRating) {
+            this.appRating = appRating;
+            return this;
+        }
+
+        public Builder setAppRatingCount(String appRatingCount) {
+            this.appRatingCount = appRatingCount;
+            return this;
+        }
+
+        public Builder setChangelogArray(List<String> changelogArray) {
+            this.changelogArray = changelogArray;
+            return this;
+        }
+
+        public PlayPackageInfo build() {
+            return new PlayPackageInfo(this);
+        }
     }
 }

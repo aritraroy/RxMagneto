@@ -6,17 +6,18 @@ import android.net.NetworkInfo;
 import android.support.annotation.Nullable;
 
 /**
- * Created by aritraroy on 15/10/16.
- *
  * Utility class to check network connectivity of the device
  */
 public class Connectivity {
 
     /**
      * Get the network information of the device
+     *
+     * @param context The application context
+     * @return The {@link NetworkInfo} object
      */
     @Nullable
-    public static NetworkInfo getNetworkInfo(Context context) {
+    private static NetworkInfo getNetworkInfo(Context context) {
         if (context != null) {
             ConnectivityManager cm = (ConnectivityManager) context
                     .getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -26,11 +27,14 @@ public class Connectivity {
     }
 
     /**
-     * Check if the device is connected to the network
+     * Check if the device is connected to the network or not
+     *
+     * @param context The application context
+     * @return The connectivity status of the device
      */
     public static boolean isConnected(Context context) {
         if (context != null) {
-            NetworkInfo info = Connectivity.getNetworkInfo(context);
+            NetworkInfo info = getNetworkInfo(context);
             return (info != null && info.isConnected());
         }
         return false;
