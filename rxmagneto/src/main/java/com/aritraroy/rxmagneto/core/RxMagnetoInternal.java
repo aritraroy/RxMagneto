@@ -28,11 +28,15 @@ public class RxMagnetoInternal {
 
     private static final int DEFAULT_TIMEOUT = 5000;
     private static final String DEFAULT_REFERRER = "http://www.google.com";
-
     static final String MARKET_PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=";
 
-    static Single<PlayPackageInfo> validatePlayPackage(final Context context,
-                                                       final String packageName) {
+    private Context context;
+
+    RxMagnetoInternal(Context context) {
+        this.context = context;
+    }
+
+    Single<PlayPackageInfo> validatePlayPackage(final String packageName) {
         return Single.create(emitter -> {
             HttpURLConnection httpURLConnection = null;
             try {
@@ -76,9 +80,8 @@ public class RxMagnetoInternal {
         });
     }
 
-    static Single<PlayPackageInfo> getPlayPackageInfo(final Context context,
-                                                      final String packageName,
-                                                      final String tag) {
+    Single<PlayPackageInfo> getPlayPackageInfo(final String packageName,
+                                               final String tag) {
         return Single.create(emitter -> {
             try {
                 String packageUrl = MARKET_PLAY_STORE_URL + packageName;
@@ -108,8 +111,7 @@ public class RxMagnetoInternal {
         });
     }
 
-    static Single<PlayPackageInfo> getPlayStoreAppRating(final Context context,
-                                                         final String packageName) {
+    Single<PlayPackageInfo> getPlayStoreAppRating(final String packageName) {
         return Single.create(emitter -> {
             try {
                 String packageUrl = MARKET_PLAY_STORE_URL + packageName;
@@ -139,8 +141,7 @@ public class RxMagnetoInternal {
         });
     }
 
-    static Single<PlayPackageInfo> getPlayStoreAppRatingsCount(final Context context,
-                                                               final String packageName) {
+    Single<PlayPackageInfo> getPlayStoreAppRatingsCount(final String packageName) {
         return Single.create(emitter -> {
             try {
                 String packageUrl = MARKET_PLAY_STORE_URL + packageName;
@@ -170,8 +171,7 @@ public class RxMagnetoInternal {
         });
     }
 
-    static Single<PlayPackageInfo> getPlayStoreRecentChangelogArray(final Context context,
-                                                                    final String packageName) {
+    Single<PlayPackageInfo> getPlayStoreRecentChangelogArray(final String packageName) {
         return Single.create(emitter -> {
             try {
                 String packageUrl = MARKET_PLAY_STORE_URL + packageName;
@@ -205,8 +205,8 @@ public class RxMagnetoInternal {
         });
     }
 
-    private static PlayPackageInfo.Builder updatePlayPackageInfoFromTag(PlayPackageInfo.Builder builder,
-                                                                        String tag, String value) {
+    private PlayPackageInfo.Builder updatePlayPackageInfoFromTag(PlayPackageInfo.Builder builder,
+                                                                 String tag, String value) {
         switch (tag) {
             case RxMagnetoTags.TAG_PLAY_STORE_VERSION:
                 builder.setPackageVersion(value);

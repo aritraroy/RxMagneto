@@ -2,4 +2,17 @@
     <string name="app_name">RxMagneto</string>
     <string name="message_internet_not_available">Internet connection is not available.</string>
     <string name="message_package_url_malformed">Package url is malformed.</string>
+    <string name="message_app_changelog_failed">Failed to grab app changelog</string>
+    <string name="message_app_rating_count_failed">Failed to grab app rating count</string>
+    <string name="message_app_rating_failed">Failed to grab app rating</string>
+    <string name="message_content_rating_failed">Failed to grab content rating</string>
+    <string name="message_os_requirement_failed">Failed to grab OS requirements</string>
+    <string name="message_published_date_failed">Failed to grab published date</string>
+    <string name="message_downloads_failed">Failed to grab downloads</string>
+    <string name="message_app_version_varies">App version varies with device.</string>
+    <string name="message_package_update_failed">Failed to grab package update</string>
+    <string name="message_app_not_installed">%1$s not installed in your device</string>
+    <string name="message_package_version_failed">Failed to grab package version</string>
+    <string name="message_verified_url_failed">Failed to grab verified url</string>
+    <string name="message_url_failed">Failed to grab url.</string>
 </resources>
