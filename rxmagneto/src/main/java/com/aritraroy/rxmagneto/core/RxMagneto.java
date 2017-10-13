@@ -1,18 +1,8 @@
 package com.aritraroy.rxmagneto.core;
 
-import android.content.Context;
-
-import com.aritraroy.rxmagneto.R;
-import com.aritraroy.rxmagneto.exceptions.AppVersionNotFoundException;
-import com.aritraroy.rxmagneto.exceptions.RxMagnetoException;
-
-import java.util.List;
-
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
-
 import static android.content.pm.PackageManager.NameNotFoundException;
 import static android.text.TextUtils.isEmpty;
+
 import static com.aritraroy.rxmagneto.core.RxMagnetoErrorCodeMap.ERROR_APP_RATING;
 import static com.aritraroy.rxmagneto.core.RxMagnetoErrorCodeMap.ERROR_APP_RATING_COUNT;
 import static com.aritraroy.rxmagneto.core.RxMagnetoErrorCodeMap.ERROR_CHANGELOG;
@@ -24,12 +14,24 @@ import static com.aritraroy.rxmagneto.core.RxMagnetoErrorCodeMap.ERROR_UPDATE;
 import static com.aritraroy.rxmagneto.core.RxMagnetoErrorCodeMap.ERROR_URL;
 import static com.aritraroy.rxmagneto.core.RxMagnetoErrorCodeMap.ERROR_VERIFIED_ERROR;
 import static com.aritraroy.rxmagneto.core.RxMagnetoErrorCodeMap.ERROR_VERSION;
+import static com.aritraroy.rxmagneto.core.RxMagnetoInternal.MARKET_PLAY_STORE_URL;
 import static com.aritraroy.rxmagneto.core.RxMagnetoTags.TAG_PLAY_STORE_CONTENT_RATING;
 import static com.aritraroy.rxmagneto.core.RxMagnetoTags.TAG_PLAY_STORE_DOWNLOADS;
 import static com.aritraroy.rxmagneto.core.RxMagnetoTags.TAG_PLAY_STORE_LAST_PUBLISHED_DATE;
 import static com.aritraroy.rxmagneto.core.RxMagnetoTags.TAG_PLAY_STORE_OS_REQUIREMENTS;
 import static com.aritraroy.rxmagneto.core.RxMagnetoTags.TAG_PLAY_STORE_VERSION;
 import static com.aritraroy.rxmagneto.util.Constants.APP_VERSION_VARIES_WITH_DEVICE;
+
+import android.content.Context;
+
+import com.aritraroy.rxmagneto.R;
+import com.aritraroy.rxmagneto.exceptions.AppVersionNotFoundException;
+import com.aritraroy.rxmagneto.exceptions.RxMagnetoException;
+
+import java.util.List;
+
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * A fast, simple and powerful Play Store information fetcher for Android. This library allows
@@ -91,7 +93,7 @@ public class RxMagneto {
      */
     public Single<String> grabUrl(String packageName) {
         if (!isEmpty(packageName)) {
-            return Single.just(RxMagnetoInternal.MARKET_PLAY_STORE_URL + packageName)
+            return Single.just(MARKET_PLAY_STORE_URL + packageName)
                     .subscribeOn(Schedulers.trampoline());
         }
         return Single.error(new RxMagnetoException(ERROR_URL.getErrorCode(),
@@ -119,7 +121,7 @@ public class RxMagneto {
      */
     public Single<String> grabVerifiedUrl(String packageName) {
         if (context != null && !isEmpty(packageName)) {
-            return rxMagnetoInternal.validatePlayPackage(packageName)
+            return rxMagnetoInternal.getPlayPackageInfoWithValidation(packageName)
                     .subscribeOn(Schedulers.io())
                     .flatMap(playPackageInfo -> Single.just(playPackageInfo.getPackageUrl()));
         }
@@ -148,9 +150,9 @@ public class RxMagneto {
      */
     public Single<String> grabVersion(String packageName) {
         if (context != null && !isEmpty(packageName)) {
-            return rxMagnetoInternal.validatePlayPackage(packageName)
+            return rxMagnetoInternal.getPlayPackageInfoWithValidation(packageName)
                     .subscribeOn(Schedulers.io())
-                    .flatMap(playPackageInfo -> rxMagnetoInternal.getPlayPackageInfo(packageName,
+                    .flatMap(playPackageInfo -> rxMagnetoInternal.getPlayPackageInfoForTag(packageName,
                             TAG_PLAY_STORE_VERSION))
                     .flatMap(playPackageInfo -> Single.just(playPackageInfo.getPackageVersion()));
         }
@@ -188,7 +190,7 @@ public class RxMagneto {
                         context.getString(R.string.message_app_not_installed, packageName)));
             }
 
-            return rxMagnetoInternal.getPlayPackageInfo(packageName, TAG_PLAY_STORE_VERSION)
+            return rxMagnetoInternal.getPlayPackageInfoForTag(packageName, TAG_PLAY_STORE_VERSION)
                     .subscribeOn(Schedulers.io())
                     .flatMap(playPackageInfo -> {
                         String currentVersion = playPackageInfo.getPackageVersion();
@@ -224,7 +226,7 @@ public class RxMagneto {
      */
     public Single<String> grabDownloads(String packageName) {
         if (context != null && !isEmpty(packageName)) {
-            return rxMagnetoInternal.getPlayPackageInfo(packageName, TAG_PLAY_STORE_DOWNLOADS)
+            return rxMagnetoInternal.getPlayPackageInfoForTag(packageName, TAG_PLAY_STORE_DOWNLOADS)
                     .subscribeOn(Schedulers.io())
                     .flatMap(playPackageInfo -> Single.just(playPackageInfo.getDownloads()));
         }
@@ -253,7 +255,7 @@ public class RxMagneto {
      */
     public Single<String> grabPublishedDate(String packageName) {
         if (context != null && !isEmpty(packageName)) {
-            return rxMagnetoInternal.getPlayPackageInfo(packageName, TAG_PLAY_STORE_LAST_PUBLISHED_DATE)
+            return rxMagnetoInternal.getPlayPackageInfoForTag(packageName, TAG_PLAY_STORE_LAST_PUBLISHED_DATE)
                     .subscribeOn(Schedulers.io())
                     .flatMap(playPackageInfo -> Single.just(playPackageInfo.getPublishedDate()));
         }
@@ -282,7 +284,7 @@ public class RxMagneto {
      */
     public Single<String> grabOsRequirements(String packageName) {
         if (context != null && !isEmpty(packageName)) {
-            return rxMagnetoInternal.getPlayPackageInfo(packageName, TAG_PLAY_STORE_OS_REQUIREMENTS)
+            return rxMagnetoInternal.getPlayPackageInfoForTag(packageName, TAG_PLAY_STORE_OS_REQUIREMENTS)
                     .subscribeOn(Schedulers.io())
                     .flatMap(playPackageInfo -> Single.just(playPackageInfo.getOsRequirements()));
         }
@@ -311,7 +313,7 @@ public class RxMagneto {
      */
     public Single<String> grabContentRating(String packageName) {
         if (context != null && !isEmpty(packageName)) {
-            return rxMagnetoInternal.getPlayPackageInfo(packageName, TAG_PLAY_STORE_CONTENT_RATING)
+            return rxMagnetoInternal.getPlayPackageInfoForTag(packageName, TAG_PLAY_STORE_CONTENT_RATING)
                     .subscribeOn(Schedulers.io())
                     .flatMap(playPackageInfo -> Single.just(playPackageInfo.getContentRating()));
         }
@@ -340,7 +342,7 @@ public class RxMagneto {
      */
     public Single<String> grabAppRating(String packageName) {
         if (context != null && !isEmpty(packageName)) {
-            return rxMagnetoInternal.getPlayStoreAppRating(packageName)
+            return rxMagnetoInternal.getPlayPackageInfoWithAppRating(packageName)
                     .subscribeOn(Schedulers.io())
                     .flatMap(playPackageInfo -> Single.just(playPackageInfo.getAppRating()));
         }
@@ -369,7 +371,7 @@ public class RxMagneto {
      */
     public Single<String> grabAppRatingsCount(String packageName) {
         if (context != null && !isEmpty(packageName)) {
-            return rxMagnetoInternal.getPlayStoreAppRatingsCount(packageName)
+            return rxMagnetoInternal.getPlayPackageInfoWithAppRatingsCount(packageName)
                     .subscribeOn(Schedulers.io())
                     .flatMap(playPackageInfo -> Single.just(playPackageInfo.getAppRatingCount()));
         }
@@ -400,7 +402,7 @@ public class RxMagneto {
      */
     public Single<List<String>> grabPlayStoreRecentChangelogArray(String packageName) {
         if (context != null && !isEmpty(packageName)) {
-            return rxMagnetoInternal.getPlayStoreRecentChangelogArray(packageName)
+            return rxMagnetoInternal.getPlayPackageInfoWithRecentChangelogArray(packageName)
                     .subscribeOn(Schedulers.io())
                     .flatMap(playPackageInfo -> Single.just(playPackageInfo.getChangelogArray()));
         }
@@ -429,7 +431,7 @@ public class RxMagneto {
      */
     public Single<String> grabPlayStoreRecentChangelog(String packageName) {
         if (context != null && !isEmpty(packageName)) {
-            return rxMagnetoInternal.getPlayStoreRecentChangelogArray(packageName)
+            return rxMagnetoInternal.getPlayPackageInfoWithRecentChangelogArray(packageName)
                     .subscribeOn(Schedulers.io())
                     .flatMap(playPackageInfo -> Single.just(playPackageInfo.getChangelogArray())
                             .flatMap(strings -> {

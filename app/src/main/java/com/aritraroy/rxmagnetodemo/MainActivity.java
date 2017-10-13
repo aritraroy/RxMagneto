@@ -50,10 +50,10 @@ public class MainActivity extends AppCompatActivity {
         rxMagneto = RxMagneto.getInstance();
         rxMagneto.initialize(this);
 
-        ImageView logo = (ImageView) findViewById(R.id.logo);
-        RecyclerView featureRecycler = (RecyclerView) findViewById(R.id.features_recycler);
-        Button grabResultButton = (Button) findViewById(R.id.grab_result);
-        packageNameEditText = (EditText) findViewById(R.id.package_name);
+        ImageView logo = findViewById(R.id.logo);
+        RecyclerView featureRecycler = findViewById(R.id.features_recycler);
+        Button grabResultButton = findViewById(R.id.grab_result);
+        packageNameEditText = findViewById(R.id.package_name);
 
         featureModelList = getFeatureModelsList();
         FeaturesRecyclerAdapter featureModelRecyclerAdapter =
@@ -122,7 +122,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getPlayStoreUrl(String packageName) {
-        final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
+        final MaterialDialog progressDialog = showLoading(this,
+                getResources().getString(R.string.message_grabbing));
 
         Single<String> urlSingle = rxMagneto.grabVerifiedUrl(packageName);
         urlSingle.observeOn(AndroidSchedulers.mainThread())
@@ -135,7 +136,8 @@ public class MainActivity extends AppCompatActivity {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(getResources().getString(R.string.label_error), throwable.getMessage());
+                    showResult(getResources().getString(R.string.label_error),
+                            throwable.getMessage());
                 });
     }
 
@@ -294,7 +296,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getAppRatingsCount(String packageName) {
-        final MaterialDialog progressDialog = showLoading(this, getResources().getString(R.string.message_grabbing));
+        final MaterialDialog progressDialog = showLoading(this,
+                getResources().getString(R.string.message_grabbing));
 
         Single<String> appRatingsCountSingle = rxMagneto.grabAppRatingsCount(packageName);
         appRatingsCountSingle.subscribeOn(Schedulers.io())
@@ -309,7 +312,8 @@ public class MainActivity extends AppCompatActivity {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    showResult(getResources().getString(R.string.label_error), throwable.getMessage());
+                    showResult(getResources().getString(R.string.label_error),
+                            throwable.getMessage());
                 });
     }
 

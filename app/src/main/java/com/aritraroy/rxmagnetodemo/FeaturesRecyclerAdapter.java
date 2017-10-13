@@ -65,8 +65,8 @@ public class FeaturesRecyclerAdapter extends
 
         public FeaturesViewHolder(View itemView) {
             super(itemView);
-            mFeatureTitle = (TextView) itemView.findViewById(R.id.feature_title);
-            mFeatureSelector = (RadioButton) itemView.findViewById(R.id.feature_selector);
+            mFeatureTitle = itemView.findViewById(R.id.feature_title);
+            mFeatureSelector = itemView.findViewById(R.id.feature_selector);
 
             mFeatureSelector.setOnClickListener(v -> {
                 selectedItem = getAdapterPosition();

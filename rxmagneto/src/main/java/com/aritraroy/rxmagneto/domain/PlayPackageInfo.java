@@ -78,10 +78,9 @@ public class PlayPackageInfo {
     }
 
     public static class Builder {
-
         private String packageName;
         private String packageUrl;
-        private Boolean isUrlValid;
+        private boolean isUrlValid;
         private String packageVersion;
         private String downloads;
         private String publishedDate;

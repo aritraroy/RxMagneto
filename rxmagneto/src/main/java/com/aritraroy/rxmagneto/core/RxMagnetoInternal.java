@@ -1,5 +1,14 @@
 package com.aritraroy.rxmagneto.core;
 
+import static com.aritraroy.rxmagneto.core.RxMagnetoTags.TAG_PLAY_STORE_APP_RATING;
+import static com.aritraroy.rxmagneto.core.RxMagnetoTags.TAG_PLAY_STORE_APP_RATING_COUNT;
+import static com.aritraroy.rxmagneto.core.RxMagnetoTags.TAG_PLAY_STORE_CONTENT_RATING;
+import static com.aritraroy.rxmagneto.core.RxMagnetoTags.TAG_PLAY_STORE_DOWNLOADS;
+import static com.aritraroy.rxmagneto.core.RxMagnetoTags.TAG_PLAY_STORE_LAST_PUBLISHED_DATE;
+import static com.aritraroy.rxmagneto.core.RxMagnetoTags.TAG_PLAY_STORE_OS_REQUIREMENTS;
+import static com.aritraroy.rxmagneto.core.RxMagnetoTags.TAG_PLAY_STORE_VERSION;
+import static com.aritraroy.rxmagneto.util.Connectivity.isConnected;
+
 import android.content.Context;
 
 import com.aritraroy.rxmagneto.R;
@@ -14,12 +23,9 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import io.reactivex.Single;
-
-import static com.aritraroy.rxmagneto.util.Connectivity.*;
 
 /**
  * The internal class to facilitate fetching of Play Store information
@@ -36,7 +42,7 @@ public class RxMagnetoInternal {
         this.context = context;
     }
 
-    Single<PlayPackageInfo> validatePlayPackage(final String packageName) {
+    Single<PlayPackageInfo> getPlayPackageInfoWithValidation(final String packageName) {
         return Single.create(emitter -> {
             HttpURLConnection httpURLConnection = null;
             try {
@@ -80,7 +86,7 @@ public class RxMagnetoInternal {
         });
     }
 
-    Single<PlayPackageInfo> getPlayPackageInfo(final String packageName,
+    Single<PlayPackageInfo> getPlayPackageInfoForTag(final String packageName,
                                                final String tag) {
         return Single.create(emitter -> {
             try {
@@ -111,7 +117,7 @@ public class RxMagnetoInternal {
         });
     }
 
-    Single<PlayPackageInfo> getPlayStoreAppRating(final String packageName) {
+    Single<PlayPackageInfo> getPlayPackageInfoWithAppRating(final String packageName) {
         return Single.create(emitter -> {
             try {
                 String packageUrl = MARKET_PLAY_STORE_URL + packageName;
@@ -127,12 +133,12 @@ public class RxMagnetoInternal {
                         .ignoreHttpErrors(true)
                         .referrer(DEFAULT_REFERRER)
                         .get()
-                        .select("div[class=" + RxMagnetoTags.TAG_PLAY_STORE_APP_RATING + "]")
+                        .select("div[class=" + TAG_PLAY_STORE_APP_RATING + "]")
                         .first()
                         .ownText();
 
                 PlayPackageInfo.Builder builder = new PlayPackageInfo.Builder(packageName, packageUrl);
-                builder = updatePlayPackageInfoFromTag(builder, RxMagnetoTags.TAG_PLAY_STORE_APP_RATING, parsedData);
+                builder = updatePlayPackageInfoFromTag(builder, TAG_PLAY_STORE_APP_RATING, parsedData);
 
                 emitter.onSuccess(builder.build());
             } catch (Exception e) {
@@ -141,7 +147,7 @@ public class RxMagnetoInternal {
         });
     }
 
-    Single<PlayPackageInfo> getPlayStoreAppRatingsCount(final String packageName) {
+    Single<PlayPackageInfo> getPlayPackageInfoWithAppRatingsCount(final String packageName) {
         return Single.create(emitter -> {
             try {
                 String packageUrl = MARKET_PLAY_STORE_URL + packageName;
@@ -157,13 +163,12 @@ public class RxMagnetoInternal {
                         .ignoreHttpErrors(true)
                         .referrer(DEFAULT_REFERRER)
                         .get()
-                        .select("span[class=" + RxMagnetoTags.TAG_PLAY_STORE_APP_RATING_COUNT + "]")
+                        .select("span[class=" + TAG_PLAY_STORE_APP_RATING_COUNT + "]")
                         .first()
                         .ownText();
 
                 PlayPackageInfo.Builder builder = new PlayPackageInfo.Builder(packageName, packageUrl);
-                builder = updatePlayPackageInfoFromTag(builder, RxMagnetoTags.TAG_PLAY_STORE_APP_RATING, parsedData);
-
+                builder = updatePlayPackageInfoFromTag(builder, TAG_PLAY_STORE_APP_RATING, parsedData);
                 emitter.onSuccess(builder.build());
             } catch (Exception e) {
                 emitter.onError(e);
@@ -171,7 +176,7 @@ public class RxMagnetoInternal {
         });
     }
 
-    Single<PlayPackageInfo> getPlayStoreRecentChangelogArray(final String packageName) {
+    Single<PlayPackageInfo> getPlayPackageInfoWithRecentChangelogArray(final String packageName) {
         return Single.create(emitter -> {
             try {
                 String packageUrl = MARKET_PLAY_STORE_URL + packageName;
@@ -196,7 +201,7 @@ public class RxMagnetoInternal {
                 }
 
                 PlayPackageInfo playPackageInfo = new PlayPackageInfo.Builder(packageName, packageUrl)
-                        .setChangelogArray(new ArrayList<>(Arrays.asList(parsedDataArray)))
+                        .setChangelogArray(Arrays.asList(parsedDataArray))
                         .build();
                 emitter.onSuccess(playPackageInfo);
             } catch (Exception e) {
@@ -208,25 +213,25 @@ public class RxMagnetoInternal {
     private PlayPackageInfo.Builder updatePlayPackageInfoFromTag(PlayPackageInfo.Builder builder,
                                                                  String tag, String value) {
         switch (tag) {
-            case RxMagnetoTags.TAG_PLAY_STORE_VERSION:
+            case TAG_PLAY_STORE_VERSION:
                 builder.setPackageVersion(value);
                 break;
-            case RxMagnetoTags.TAG_PLAY_STORE_DOWNLOADS:
+            case TAG_PLAY_STORE_DOWNLOADS:
                 builder.setDownloads(value);
                 break;
-            case RxMagnetoTags.TAG_PLAY_STORE_LAST_PUBLISHED_DATE:
+            case TAG_PLAY_STORE_LAST_PUBLISHED_DATE:
                 builder.setPublishedDate(value);
                 break;
-            case RxMagnetoTags.TAG_PLAY_STORE_OS_REQUIREMENTS:
+            case TAG_PLAY_STORE_OS_REQUIREMENTS:
                 builder.setOsRequirements(value);
                 break;
-            case RxMagnetoTags.TAG_PLAY_STORE_CONTENT_RATING:
+            case TAG_PLAY_STORE_CONTENT_RATING:
                 builder.setContentRating(value);
                 break;
-            case RxMagnetoTags.TAG_PLAY_STORE_APP_RATING:
+            case TAG_PLAY_STORE_APP_RATING:
                 builder.setAppRating(value);
                 break;
-            case RxMagnetoTags.TAG_PLAY_STORE_APP_RATING_COUNT:
+            case TAG_PLAY_STORE_APP_RATING_COUNT:
                 builder.setAppRatingCount(value);
                 break;
         }
