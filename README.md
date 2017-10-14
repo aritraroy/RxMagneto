@@ -3,7 +3,7 @@
 A fast, light-weight and powerful Play Store information fetcher for Android.
 
 ### Specs
-[ ![Download](https://api.bintray.com/packages/aritraroy/maven/rxmagneto/images/download.svg) ](https://bintray.com/aritraroy/maven/rxmagneto/_latestVersion) [![API](https://img.shields.io/badge/API-15%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=15) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-RxMagneto-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/5362)
+[ ![Download](https://api.bintray.com/packages/aritraroy/maven/rxmagneto/images/download.svg) ](https://bintray.com/aritraroy/maven/rxmagneto/_latestVersion) [![API](https://img.shields.io/badge/API-15%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=14) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-RxMagneto-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/5362)
 
 ![RxMagneto](https://github.com/aritraroy/RxMagneto/blob/master/raw/logo_250.png)
 
