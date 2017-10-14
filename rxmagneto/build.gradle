@@ -14,7 +14,7 @@ ext {
     siteUrl = 'https://github.com/aritraroy/RxMagneto'
     gitUrl = 'https://github.com/aritraroy/RxMagneto.git'
 
-    libraryVersion = '1.0.0'
+    libraryVersion = '2.0.0'
 
     developerId = 'aritraroy'
     developerName = 'Aritra Roy'
@@ -32,8 +32,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "2.0"
     }
 
     buildTypes {
