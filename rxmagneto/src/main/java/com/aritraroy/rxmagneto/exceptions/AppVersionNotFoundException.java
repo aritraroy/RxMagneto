@@ -1,10 +1,10 @@
 package com.aritraroy.rxmagneto.exceptions;
 
 /**
- * Created by aa on 17/03/17.
+ * Exception thrown when a proper app version is not available for the specified package
+ * on Play Store. This typically happens when there is no version mentioned in Play Store page
+ * itself and we get a message like "Varies with device".
  */
-
-//Exception which is thrown when proper app version is not found for the specified package on play store.
 public class AppVersionNotFoundException extends Exception {
     public AppVersionNotFoundException(String message) {
         super(message);

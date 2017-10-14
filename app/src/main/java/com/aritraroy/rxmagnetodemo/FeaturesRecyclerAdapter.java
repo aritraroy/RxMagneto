@@ -15,15 +15,15 @@ import java.util.List;
 /**
  * Created by aritraroy on 18/02/17.
  */
+public class FeaturesRecyclerAdapter extends
+        RecyclerView.Adapter<FeaturesRecyclerAdapter.FeaturesViewHolder> {
 
-public class FeaturesRecyclerAdapter extends RecyclerView.Adapter<FeaturesRecyclerAdapter.FeaturesViewHolder> {
-
-    public int mSelectedItem = 0;
+    private int selectedItem = 0;
 
     private List<FeatureModel> mFeatureModelsList;
     private OnClickListener mOnClickListener;
 
-    public FeaturesRecyclerAdapter(List<FeatureModel> featureList) {
+    FeaturesRecyclerAdapter(List<FeatureModel> featureList) {
         this.mFeatureModelsList = featureList;
     }
 
@@ -40,7 +40,7 @@ public class FeaturesRecyclerAdapter extends RecyclerView.Adapter<FeaturesRecycl
         if (featureModel != null) {
             holder.mFeatureTitle.setText(featureModel.getTitle());
             holder.mFeatureSelector.setTag(featureModel.getId());
-            holder.mFeatureSelector.setChecked(position == mSelectedItem);
+            holder.mFeatureSelector.setChecked(position == selectedItem);
         }
     }
 
@@ -54,10 +54,6 @@ public class FeaturesRecyclerAdapter extends RecyclerView.Adapter<FeaturesRecycl
         return mFeatureModelsList != null ? mFeatureModelsList.size() : 0;
     }
 
-    public OnClickListener getOnClickListener() {
-        return mOnClickListener;
-    }
-
     public void setOnClickListener(OnClickListener listener) {
         this.mOnClickListener = listener;
     }
@@ -69,24 +65,21 @@ public class FeaturesRecyclerAdapter extends RecyclerView.Adapter<FeaturesRecycl
 
         public FeaturesViewHolder(View itemView) {
             super(itemView);
-            mFeatureTitle = (TextView) itemView.findViewById(R.id.feature_title);
-            mFeatureSelector = (RadioButton) itemView.findViewById(R.id.feature_selector);
+            mFeatureTitle = itemView.findViewById(R.id.feature_title);
+            mFeatureSelector = itemView.findViewById(R.id.feature_selector);
 
-            mFeatureSelector.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mSelectedItem = getAdapterPosition();
-                    notifyItemRangeChanged(0, mFeatureModelsList.size());
+            mFeatureSelector.setOnClickListener(v -> {
+                selectedItem = getAdapterPosition();
+                notifyItemRangeChanged(0, mFeatureModelsList.size());
 
-                    if (mOnClickListener != null) {
-                        mOnClickListener.onClick((Integer) v.getTag());
-                    }
+                if (mOnClickListener != null) {
+                    mOnClickListener.onClick((Integer) v.getTag());
                 }
             });
         }
     }
 
-    public interface OnClickListener {
+    interface OnClickListener {
         void onClick(int featureId);
     }
 }

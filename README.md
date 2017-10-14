@@ -9,7 +9,7 @@ A fast, light-weight and powerful Play Store information fetcher for Android.
 
 This library allows you to **fetch various live information from Play Store** of your app or any other app of your choice. With just a few lines of code, you can get access to a lot of useful app data fetched fresh from the Play Store.
 
-It has been named after the famous anti-villian from X-Men. This library has been **completely written using RxJava** giving you powerful controls to make the most use of it.
+It has been named after the famous anti-villain from X-Men. This library has been **completely written using RxJava** giving you powerful controls to make the most use of it.
 
 ![RxMagneto](https://github.com/aritraroy/RxMagneto/blob/master/raw/github_screenshot.png)
 
@@ -200,7 +200,8 @@ Android & Backend Developer. Blogger. Designer. Fitness Enthusiast.
 
 <a href="https://play.google.com/store/apps/details?id=com.codexapps.andrognito&hl=en" target="_blank"><img src="https://github.com/aritraroy/social-icons/blob/master/play-store-icon.png?raw=true" width="60"></a> <a href="https://blog.aritraroy.in/" target="_blank"><img src="https://github.com/aritraroy/social-icons/blob/master/medium-icon.png?raw=true" width="60"></a>
 <a href="http://stackoverflow.com/users/2858654/aritra-roy" target="_blank"><img src="https://github.com/aritraroy/social-icons/blob/master/stackoverflow-icon.png?raw=true" width="60"></a>
-<a href="https://twitter.com/aritraroy93" target="_blank"><img src="https://github.com/aritraroy/social-icons/blob/master/twitter-icon.png?raw=true" width="60"></a>
+<a href="https://twitter.com/aritraroy" target="_blank"><img src="https://github.com/aritraroy/social-icons/blob/master/twitter-icon.png?raw=true" width="60"></a>
+<a href="http://linkedin.com/in/aritra-roy"><img src="https://github.com/aritraroy/social-icons/blob/master/linkedin-icon.png?raw=true" width="60"></a>
 
 
 # License
