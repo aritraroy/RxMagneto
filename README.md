@@ -3,7 +3,7 @@
 A fast, light-weight and powerful Play Store information fetcher for Android.
 
 ### Specs
-[ ![Download](https://api.bintray.com/packages/aritraroy/maven/rxmagneto/images/download.svg) ](https://bintray.com/aritraroy/maven/rxmagneto/_latestVersion) [![API](https://img.shields.io/badge/API-15%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=15) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-RxMagneto-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/5362)
+[ ![Download](https://api.bintray.com/packages/aritraroy/maven/rxmagneto/images/download.svg) ](https://bintray.com/aritraroy/maven/rxmagneto/_latestVersion) [![API](https://img.shields.io/badge/API-14%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=14) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-RxMagneto-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/5362)
 
 ![RxMagneto](https://github.com/aritraroy/RxMagneto/blob/master/raw/logo_250.png)
 
@@ -22,7 +22,7 @@ This library is available in **jCenter** which is the default Maven repository u
 dependencies {
     // other dependencies here
     
-    compile 'com.andrognito.rxmagneto:rxmagneto:1.0.0'
+    compile 'com.andrognito.rxmagneto:rxmagneto:2.0.0'
 }
 ```
 
@@ -32,14 +32,20 @@ dependencies {
 <dependency>
   <groupId>com.andrognito.rxmagneto</groupId>
   <artifactId>rxmagneto</artifactId>
-  <version>1.0.0</version>
+  <version>2.0.0</version>
   <type>pom</type>
 </dependency>
 ```
 
+# Migrating to Version 2
+
+RxMagneto 2 brings some breaking changes from version 1. The entire library is re-written using RxJava 2. All the Observables are now changed into Singles, so there will be some re-work for you. You also do NOT need to perform these operations in the background thread as it is automatically done for you.
+
+The core functionality of the library remains the same. Every feature in the new version of this library works in the same way and returns the same result as the previous version.
+
+
 ### Spread Some :heart:
-[![GitHub stars](https://img.shields.io/github/stars/aritraroy/RxMagneto.svg?style=social&label=Star)](https://github.com/aritraroy) [![GitHub followers](https://img.shields.io/github/followers/aritraroy.svg?style=social&label=Follow)](https://github.com/aritraroy)  
-[![Twitter Follow](https://img.shields.io/twitter/follow/aritraroy93.svg?style=social)](https://twitter.com/aritraroy93) 
+[![GitHub stars](https://img.shields.io/github/stars/aritraroy/RxMagneto.svg?style=social&label=Star)](https://github.com/aritraroy) [![GitHub followers](https://img.shields.io/github/followers/aritraroy.svg?style=social&label=Follow)](https://github.com/aritraroy)  [![Twitter Follow](https://img.shields.io/twitter/follow/aritraroy93.svg?style=social)](https://twitter.com/aritraroy93) 
 
 ## Use Cases
 
@@ -66,7 +72,7 @@ RxMagneto rxMagneto = RxMagneto.getInstance();
 rxMagneto.initialize(this);
 ```
 
-The initialize method takes a Context object. It can either be an Application context or Activity context.
+The initialize method takes a `Context` object. It can either be an `Application` context or `Activity` context.
 
 
 ## Quick Example
@@ -77,14 +83,13 @@ Here is a quick example for you to get started right away in less than a minute.
 RxMagneto rxMagneto = RxMagneto.getInstance();
 rxMagneto.initialize(this);
 
-Observable<String> observable = rxMagneto.grabVersion(packageName);
-observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> { 
-                    Log.d("RxMagneto", "Version: " + s);
-                }, throwable -> {
-                    Log.d("RxMagneto", "Error");
-                });
+Single<String> version = rxMagneto.grabVersion(packageName);
+version.observeOn(AndroidSchedulers.mainThread())
+           .subscribe(s -> { 
+                Log.d("RxMagneto", "Version: " + s);
+            }, throwable -> {
+                Log.d("RxMagneto", "Error");
+            });
 ```
 
 ## All Features
@@ -97,95 +102,95 @@ Here is a list of all the featues offered by RxMagneto. I will be actively takin
 Gets the Play Store URL of the specified package. You can make this call in the main thread of the application.
 
 ```java
-Observable<String> urlObservable = rxMagneto.grabUrl(packageName);
+Single<String> urlSingle = rxMagneto.grabUrl(packageName);
 ```
 
 ### Get Verified Play Store URL
 
-Gets the verified Play Store URL of the specified package. You can NOT make this call in the main thread of the application.
+Gets the verified Play Store URL of the specified package. It automatically performs the operation in a background thread, so that you do NOT need to explicitly do it.
 
 ```java
-Observable<String> urlObservable = rxMagneto.grabVerifiedUrl(packageName);
+Single<String> urlSingle = rxMagneto.grabVerifiedUrl(packageName);
 ```
 
 ### Get Version
 
-Gets the latest version of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+Gets the latest version of the specified package from Play Store. It automatically performs the operation in a background thread, so that you do NOT need to explicitly do it.
 
 ```java
-Observable<String> versionObservable = rxMagneto.grabVersion(packageName);
+Single<String> versionSingle = rxMagneto.grabVersion(packageName);
 ```
 
 ### Check If Update Is Available
 
-Check if an update is available for the specified package from Play Store. You can NOT make this call in the main thread of the application.
+Check if an update is available for the specified package from Play Store. It automatically performs the operation in a background thread, so that you do NOT need to explicitly do it.
 
 ```java
-Observable<Boolean> updateAvailableObservable = rxMagneto.isUpgradeAvailable(packageName);
+Single<Boolean> updateAvailableSingle = rxMagneto.isUpgradeAvailable(packageName);
 ```
 
 ### Get Downloads
 
-Gets the no. of downloads of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+Gets the no. of downloads of the specified package from Play Store. It automatically performs the operation in a background thread, so that you do NOT need to explicitly do it.
 
 ```java
-Observable<String> downloadsObservable = rxMagneto.grabDownloads(packageName);
+Single<String> downloadsSingle = rxMagneto.grabDownloads(packageName);
 ```
 
 ### Get Last Published Date
 
-Gets the last published date of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+Gets the last published date of the specified package from Play Store. It automatically performs the operation in a background thread, so that you do NOT need to explicitly do it.
 
 ```java
-Observable<String> publishedDateObservable = rxMagneto.grabPublishedDate(packageName);
+Single<String> publishedDateSingle = rxMagneto.grabPublishedDate(packageName);
 ```
 
 ### Get OS Requirements
 
-Gets the OS requirements of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+Gets the OS requirements of the specified package from Play Store. It automatically performs the operation in a background thread, so that you do NOT need to explicitly do it.
 
 ```java
-Observable<String> osRequirementsObservable = rxMagneto.grabOsRequirements(packageName);
+Single<String> osRequirementsSingle = rxMagneto.grabOsRequirements(packageName);
 ```
 
 ### Get Content Rating
 
-Gets the content rating of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+Gets the content rating of the specified package from Play Store. It automatically performs the operation in a background thread, so that you do NOT need to explicitly do it.
 
 ```java
-Observable<String> contentRatingObservable = rxMagneto.grabContentRating(packageName);
+Single<String> contentRatingSingle = rxMagneto.grabContentRating(packageName);
 ```
 
 ### Get App Rating
 
-Gets the app rating of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+Gets the app rating of the specified package from Play Store. It automatically performs the operation in a background thread, so that you do NOT need to explicitly do it.
 
 ```java
-Observable<String> appRatingObservable = rxMagneto.grabAppRating(packageName);
+Single<String> appRatingSingle = rxMagneto.grabAppRating(packageName);
 ```
 
 ### Get App Ratings Count
 
-Gets the no. of app ratings of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+Gets the no. of app ratings of the specified package from Play Store. It automatically performs the operation in a background thread, so that you do NOT need to explicitly do it.
 
 ```java
-Observable<String> appRatingsCount = rxMagneto.grabAppRatingsCount(packageName);
+Single<String> appRatingsCountSingle = rxMagneto.grabAppRatingsCount(packageName);
 ```
 
 ### Get Recent Changelog (as Array)
 
-Gets the recent changelog (as array) of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+Gets the recent changelog (as array) of the specified package from Play Store. It automatically performs the operation in a background thread, so that you do NOT need to explicitly do it.
 
 ```java
-Observable<ArrayList<String>> changelogObservable = rxMagneto.grabPlayStoreRecentChangelogArray(packageName);
+Single<ArrayList<String>> changelogSingle = rxMagneto.grabPlayStoreRecentChangelogArray(packageName);
 ```
 
 ### Get Recent Changelog (as String)
 
-Gets the recent changelog (as string) of the specified package from Play Store. You can NOT make this call in the main thread of the application.
+Gets the recent changelog (as string) of the specified package from Play Store. It automatically performs the operation in a background thread, so that you do NOT need to explicitly do it.
 
 ```java
-Observable<String> changelogObservable = rxMagneto.grabPlayStoreRecentChangelog(packageName);
+Single<String> changelogSingle = rxMagneto.grabPlayStoreRecentChangelog(packageName);
 ```
 
 # Contribution
