@@ -168,7 +168,7 @@ public class RxMagnetoInternal {
                         .ownText();
 
                 PlayPackageInfo.Builder builder = new PlayPackageInfo.Builder(packageName, packageUrl);
-                builder = updatePlayPackageInfoFromTag(builder, TAG_PLAY_STORE_APP_RATING, parsedData);
+                builder = updatePlayPackageInfoFromTag(builder, TAG_PLAY_STORE_APP_RATING_COUNT, parsedData);
                 emitter.onSuccess(builder.build());
             } catch (Exception e) {
                 emitter.onError(e);
